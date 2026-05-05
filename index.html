@@ -203,23 +203,68 @@
       box-shadow: var(--shadow);
     }
 
-    /* Blur-Balken – verdeckt das Twitch-Titel-Banner mit Zuschauerzahl */
+    /* ── Blur-Balken – kein schwarzer Balken, echter Glasblur ── */
     .viewer-blur-bar {
       position: absolute;
-      top: 0;
-      left: 0;
-      /* Breite: deckt linke Hälfte ab wo Kanalname + Zuschauerzahl stehen */
-      width: 52%;
-      /* Höhe: deckt das komplette Twitch-Banner inkl. 2. Zeile ab */
-      height: 18%;
+      top: 0; left: 0;
+      width: 54%;
+      height: 20%;
       z-index: 6;
-      backdrop-filter: blur(20px) brightness(0.15);
-      -webkit-backdrop-filter: blur(20px) brightness(0.15);
-      background: rgba(0, 0, 0, 0.6);
+      /* Starker Blur + Sättigung runter damit Zahl unlesbar wird */
+      backdrop-filter: blur(28px) saturate(0.2) brightness(0.9);
+      -webkit-backdrop-filter: blur(28px) saturate(0.2) brightness(0.9);
+      /* Hauch lila-transluzent statt schwarz */
+      background: rgba(80, 40, 120, 0.18);
       pointer-events: none;
+      transition: opacity 0.3s ease;
     }
-    /* Nach Submit: Balken ausblenden damit echte Zahl sichtbar wird */
-    .viewer-blur-bar.hidden { display: none; }
+    /* Im Vollbild: Twitch baut den Player neu auf mit :fullscreen – 
+       wir heften den Balken daher mit fixed ans Viewport damit er
+       auch im Vollbild sichtbar bleibt */
+    .stream-wrap:fullscreen .viewer-blur-bar,
+    .stream-wrap:-webkit-full-screen .viewer-blur-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 54vw;
+      height: 12vh;
+      z-index: 2147483647;
+    }
+    .viewer-blur-bar.hidden { opacity: 0; pointer-events: none; }
+
+    /* ── Hauptmenü-Button im Game-Screen ── */
+    .btn-menu {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: transparent; color: var(--text-dim);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      cursor: pointer; transition: all 0.18s; letter-spacing: 0.04em;
+    }
+    .btn-menu:hover { border-color: var(--text-muted); color: var(--text-muted); }
+    .btn-menu svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* ── Bestätigungs-Modal ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-backdrop.visible { display: flex; }
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 36px 40px;
+      max-width: 380px; width: 90%; text-align: center;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.8);
+      animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+    .modal-icon { font-size: 2.2rem; margin-bottom: 12px; }
+    .modal h3 { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .modal p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; }
+
     #twitch-iframe {
       position: absolute; inset: 0;
       width: 100%; height: 100%; border: none;
@@ -483,7 +528,26 @@
 
     <div class="top-bar">
       <div class="round-indicator">Runde <strong id="rc">1</strong> / <span id="rt">10</span></div>
-      <div class="card score-box"><span class="lbl">Punkte</span><span class="score-val" id="sv">0</span></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn-menu" id="btn-to-menu">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Hauptmenü
+        </button>
+        <div class="card score-box"><span class="lbl">Punkte</span><span class="score-val" id="sv">0</span></div>
+      </div>
+    </div>
+
+    <!-- Bestätigungs-Modal: Hauptmenü verlassen? -->
+    <div class="modal-backdrop" id="modal-menu">
+      <div class="modal">
+        <div class="modal-icon">🏠</div>
+        <h3>Zum Hauptmenü?</h3>
+        <p>Dein aktueller Spielfortschritt geht verloren. Möchtest du wirklich ins Hauptmenü zurückkehren?</p>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="modal-cancel">Weiterspielen</button>
+          <button class="btn-primary" id="modal-confirm">Ja, Hauptmenü</button>
+        </div>
+      </div>
     </div>
 
     <div class="error-box" id="err-box">
@@ -768,6 +832,32 @@ $('btn-demo').addEventListener('click', () => {
 $('btn-back-setup').addEventListener('click', () => show('screen-setup'));
 
 /* ══════════════════════════════════════════════
+   HAUPTMENÜ-BUTTON & BESTÄTIGUNGS-MODAL
+══════════════════════════════════════════════ */
+$('btn-to-menu').addEventListener('click', () => {
+  // Modal anzeigen
+  $('modal-menu').classList.add('visible');
+});
+
+$('modal-cancel').addEventListener('click', () => {
+  // Abbrechen – zurück zum Spiel
+  $('modal-menu').classList.remove('visible');
+});
+
+$('modal-confirm').addEventListener('click', () => {
+  // Bestätigt – Spiel zurücksetzen und zum Menü
+  $('modal-menu').classList.remove('visible');
+  // iframe leeren damit der Stream stoppt
+  $('twitch-iframe').src = 'about:blank';
+  show('screen-menu');
+});
+
+// Klick auf Backdrop schließt Modal auch
+$('modal-menu').addEventListener('click', (e) => {
+  if(e.target === $('modal-menu')) $('modal-menu').classList.remove('visible');
+});
+
+/* ══════════════════════════════════════════════
    MENU
 ══════════════════════════════════════════════ */
 document.querySelectorAll('.round-btn').forEach(b => {
@@ -955,4 +1045,3 @@ function playSound(pts) {
 </script>
 </body>
 </html>
-
