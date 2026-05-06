@@ -488,7 +488,8 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.re
    Kein Client-Secret nötig!
 ══════════════════════════════════════════════ */
 function getRedirectUri() {
-  return window.location.origin + window.location.pathname;
+  // Exakte GitHub Pages URL – muss 1:1 mit der Twitch App OAuth Redirect URL übereinstimmen
+  return 'https://kieskauer.github.io/viewcount-guessr/';
 }
 
 function startTwitchLogin() {
