@@ -7,10 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
   <style>
     /* ════════════════════════════════════
-       DESIGN TOKENS – Twitch Dark Theme
+       DESIGN TOKENS
     ════════════════════════════════════ */
     :root {
       --bg-deep:      #0d0d0f;
@@ -31,43 +30,25 @@
       --radius-sm:    8px;
       --shadow:       0 8px 40px rgba(0,0,0,0.6);
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'DM Mono', monospace;
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
+      background: var(--bg-deep); color: var(--text-primary);
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
       overflow-x: hidden;
     }
-
     body::before {
       content: ''; position: fixed; inset: 0;
       background-image:
         linear-gradient(rgba(145,71,255,0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(145,71,255,0.025) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none; z-index: 0;
+      background-size: 40px 40px; pointer-events: none; z-index: 0;
     }
-
-    .wrapper {
-      position: relative; z-index: 1;
-      width: 100%; max-width: 900px;
-      padding: 0 16px 80px;
-    }
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 900px; padding: 0 16px 80px; }
 
     /* ── Header ── */
-    header {
-      display: flex; align-items: center; justify-content: center;
-      gap: 14px; padding: 28px 0 20px;
-    }
-    .logo-icon {
-      width: 38px; height: 38px; background: var(--accent);
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 24px var(--accent-glow); flex-shrink: 0;
-    }
+    header { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 28px 0 20px; }
+    .logo-icon { width: 38px; height: 38px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 24px var(--accent-glow); flex-shrink: 0; }
     .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
     h1 { font-family: 'Bebas Neue', cursive; font-size: clamp(1.8rem,5vw,3rem); letter-spacing: 0.04em; line-height: 1; }
     h1 span { color: var(--accent); }
@@ -77,97 +58,38 @@
     .screen.active { display: flex; }
     .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
 
-    /* ── Shared: Inputs ── */
-    .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-    .input-group label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
-    .text-input {
-      background: var(--bg-deep); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); color: var(--text-primary);
-      font-family: 'DM Mono', monospace; font-size: 0.85rem;
-      padding: 11px 16px; outline: none; width: 100%;
-      transition: border-color 0.18s, box-shadow 0.18s;
-    }
-    .text-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-    .text-input::placeholder { color: var(--text-dim); }
-
-    /* ── Shared: Buttons ── */
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--accent); color: #fff; border: none;
-      border-radius: var(--radius-sm); padding: 13px 30px;
-      font-family: 'Bebas Neue', cursive; font-size: 1.05rem; letter-spacing: 0.08em;
-      cursor: pointer; transition: all 0.18s; box-shadow: 0 4px 18px var(--accent-glow);
-    }
-    .btn-primary:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); }
-    .btn-primary:active:not(:disabled) { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: transparent; color: var(--text-muted); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 11px 26px;
-      font-family: 'Bebas Neue', cursive; font-size: 1.05rem; letter-spacing: 0.08em;
-      cursor: pointer; transition: all 0.18s;
-    }
-    .btn-secondary:hover { border-color: var(--accent-light); color: var(--accent-light); background: var(--accent-dim); }
-
-    .btn-ghost {
-      background: none; border: none; color: var(--text-dim);
-      font-family: 'DM Mono', monospace; font-size: 0.75rem;
-      cursor: pointer; padding: 4px 0; text-decoration: underline; transition: color 0.15s;
-    }
-    .btn-ghost:hover { color: var(--text-muted); }
-
     /* ════════════════════════════════════
-       SETUP SCREEN
+       LOGIN SCREEN
     ════════════════════════════════════ */
-    #screen-setup { align-items: center; gap: 20px; padding: 16px 0 40px; }
+    #screen-login { align-items: center; gap: 24px; padding: 16px 0 40px; }
+    .login-card { padding: 40px 44px; max-width: 420px; width: 100%; text-align: center; }
+    .login-card h2 { font-family: 'Bebas Neue', cursive; font-size: 1.8rem; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .login-card > p { color: var(--text-muted); font-size: 0.8rem; line-height: 1.7; margin-bottom: 32px; }
 
-    .setup-card { padding: 36px 40px; max-width: 560px; width: 100%; }
-    .setup-card h2 { font-family: 'Bebas Neue', cursive; font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 10px; }
-    .setup-card > p { color: var(--text-muted); font-size: 0.8rem; line-height: 1.7; margin-bottom: 24px; }
+    .btn-twitch-login {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; padding: 15px 24px;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 0.08em;
+      cursor: pointer; transition: all 0.18s;
+      box-shadow: 0 4px 24px rgba(145,71,255,0.5);
+    }
+    .btn-twitch-login:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 6px 32px rgba(145,71,255,0.6); }
+    .btn-twitch-login:active:not(:disabled) { transform: translateY(0); }
+    .btn-twitch-login:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-twitch-login svg { width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
 
-    /* Schritt-Anleitung */
-    .steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
-    .step {
-      display: flex; gap: 14px; align-items: flex-start;
-      background: var(--bg-hover); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 14px 16px;
-    }
-    .step-num {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: var(--accent); color: #fff;
-      font-family: 'Bebas Neue', cursive; font-size: 1rem;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .step-body { flex: 1; }
-    .step-title { font-size: 0.82rem; color: var(--text-primary); margin-bottom: 4px; }
-    .step-desc { font-size: 0.73rem; color: var(--text-muted); line-height: 1.55; }
-    .step-desc a { color: var(--accent-light); text-decoration: none; }
-    .step-desc a:hover { text-decoration: underline; }
-    .step-desc code {
-      background: rgba(145,71,255,0.18); padding: 1px 6px;
-      border-radius: 4px; font-size: 0.78rem; user-select: all;
-    }
+    .login-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: var(--text-dim); font-size: 0.72rem; }
+    .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background: var(--border); }
 
-    /* Domain-Badge (zeigt die aktuelle Seiten-Domain) */
-    .domain-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.3);
-      border-radius: var(--radius-sm); padding: 8px 14px;
-      font-size: 0.78rem; color: var(--green); margin-bottom: 20px;
-      width: 100%;
+    .login-info {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-top: 24px; padding: 12px 14px; text-align: left;
+      background: var(--bg-hover); border-radius: var(--radius-sm);
+      font-size: 0.72rem; color: var(--text-dim); line-height: 1.55;
     }
-    .domain-badge svg { width: 14px; height: 14px; fill: var(--green); flex-shrink: 0; }
-    .domain-badge .domain-val { font-weight: 500; user-select: all; }
-
-    .hint-box {
-      background: var(--accent-dim); border: 1px solid rgba(145,71,255,0.2);
-      border-radius: var(--radius-sm); padding: 12px 16px;
-      font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;
-    }
-    .hint-box strong { color: var(--accent-light); }
+    .login-info svg { width: 15px; height: 15px; fill: var(--text-dim); flex-shrink: 0; margin-top: 1px; }
 
     /* ════════════════════════════════════
        MENU SCREEN
@@ -175,18 +97,39 @@
     #screen-menu { align-items: center; gap: 28px; padding: 16px 0 40px; }
     .menu-card { padding: 36px 44px; text-align: center; max-width: 460px; width: 100%; }
     .menu-card h2 { font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .menu-card p  { color: var(--text-muted); font-size: 0.8rem; line-height: 1.6; margin-bottom: 28px; }
-    .round-label  { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); margin-bottom: 10px; }
+    .menu-card > p { color: var(--text-muted); font-size: 0.8rem; line-height: 1.6; margin-bottom: 20px; }
+
+    /* User Badge */
+    .user-badge { display: flex; align-items: center; gap: 12px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 20px; text-align: left; }
+    .user-badge img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .user-badge-name { font-size: 0.85rem; color: var(--text-primary); font-weight: 500; }
+    .user-badge-sub { font-size: 0.67rem; color: var(--text-dim); margin-top: 2px; }
+
+    .round-label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); margin-bottom: 10px; }
     .round-options { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
     .round-btn { width: 64px; height: 50px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); font-family: 'Bebas Neue', cursive; font-size: 1.4rem; cursor: pointer; transition: all 0.18s; }
     .round-btn:hover { border-color: var(--accent-light); color: var(--accent-light); background: var(--accent-dim); }
     .round-btn.active { border-color: var(--accent); color: #fff; background: var(--accent); box-shadow: 0 0 16px var(--accent-glow); }
 
     /* ════════════════════════════════════
+       SHARED BUTTONS
+    ════════════════════════════════════ */
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); padding: 13px 30px; font-family: 'Bebas Neue', cursive; font-size: 1.05rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.18s; box-shadow: 0 4px 18px var(--accent-glow); }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 26px; font-family: 'Bebas Neue', cursive; font-size: 1.05rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.18s; }
+    .btn-secondary:hover { border-color: var(--accent-light); color: var(--accent-light); background: var(--accent-dim); }
+    .btn-ghost { background: none; border: none; color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 0.75rem; cursor: pointer; padding: 4px 0; text-decoration: underline; transition: color 0.15s; }
+    .btn-ghost:hover { color: var(--text-muted); }
+    .btn-menu { display: inline-flex; align-items: center; gap: 7px; background: transparent; color: var(--text-dim); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 14px; font-family: 'DM Mono', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.18s; }
+    .btn-menu:hover { border-color: var(--text-muted); color: var(--text-muted); }
+    .btn-menu svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* ════════════════════════════════════
        GAME SCREEN
     ════════════════════════════════════ */
     #screen-game { gap: 18px; padding: 8px 0; }
-
     .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .round-indicator { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
     .round-indicator strong { color: var(--accent-light); font-size: 1rem; }
@@ -195,108 +138,41 @@
     .score-val { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; color: var(--accent-light); transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .25s; }
     .score-val.bump { transform: scale(1.4); color: #fff; }
 
-    /* Twitch Player Container */
-    .stream-wrap {
-      position: relative; width: 100%; aspect-ratio: 16/9;
-      border-radius: var(--radius); overflow: hidden;
-      background: #000; border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-    }
+    /* Stream Wrap */
+    .stream-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); box-shadow: var(--shadow); }
 
-    /* ── Blur-Balken – kein schwarzer Balken, echter Glasblur ── */
+    /* ── Blur-Balken: kein schwarzer Balken, echter Glasblur ── */
     .viewer-blur-bar {
-      position: absolute;
-      top: 0; left: 0;
-      width: 54%;
-      height: 20%;
-      z-index: 6;
-      /* Starker Blur + Sättigung runter damit Zahl unlesbar wird */
-      backdrop-filter: blur(28px) saturate(0.2) brightness(0.9);
-      -webkit-backdrop-filter: blur(28px) saturate(0.2) brightness(0.9);
-      /* Hauch lila-transluzent statt schwarz */
-      background: rgba(80, 40, 120, 0.18);
-      pointer-events: none;
-      transition: opacity 0.3s ease;
+      position: absolute; top: 0; left: 0;
+      width: 54%; height: 20%; z-index: 6;
+      backdrop-filter: blur(28px) saturate(0.15) brightness(0.85);
+      -webkit-backdrop-filter: blur(28px) saturate(0.15) brightness(0.85);
+      background: rgba(80, 30, 160, 0.15);
+      pointer-events: none; transition: opacity 0.3s;
     }
-    /* Im Vollbild: Twitch baut den Player neu auf mit :fullscreen – 
-       wir heften den Balken daher mit fixed ans Viewport damit er
-       auch im Vollbild sichtbar bleibt */
-    .stream-wrap:fullscreen .viewer-blur-bar,
-    .stream-wrap:-webkit-full-screen .viewer-blur-bar {
-      position: fixed;
-      top: 0; left: 0;
-      width: 54vw;
-      height: 12vh;
+    /* Im Vollbild via fixed positionieren damit der Balken sichtbar bleibt */
+    :fullscreen .viewer-blur-bar,
+    :-webkit-full-screen .viewer-blur-bar {
+      position: fixed; top: 0; left: 0;
+      width: 54vw; height: 12vh;
       z-index: 2147483647;
     }
     .viewer-blur-bar.hidden { opacity: 0; pointer-events: none; }
 
-    /* ── Hauptmenü-Button im Game-Screen ── */
-    .btn-menu {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: transparent; color: var(--text-dim);
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      padding: 7px 14px;
-      font-family: 'DM Mono', monospace; font-size: 0.72rem;
-      cursor: pointer; transition: all 0.18s; letter-spacing: 0.04em;
-    }
-    .btn-menu:hover { border-color: var(--text-muted); color: var(--text-muted); }
-    .btn-menu svg { width: 13px; height: 13px; fill: currentColor; }
-
-    /* ── Bestätigungs-Modal ── */
-    .modal-backdrop {
-      display: none;
-      position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      align-items: center; justify-content: center;
-    }
-    .modal-backdrop.visible { display: flex; }
-    .modal {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 36px 40px;
-      max-width: 380px; width: 90%; text-align: center;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.8);
-      animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    @keyframes modalIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
-    .modal-icon { font-size: 2.2rem; margin-bottom: 12px; }
-    .modal h3 { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: 0.05em; margin-bottom: 10px; }
-    .modal p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
-    .modal-actions { display: flex; gap: 12px; justify-content: center; }
-
-    #twitch-iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%; border: none;
-    }
+    #twitch-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 
     /* Lade-Overlay */
-    .stream-loading {
-      position: absolute; inset: 0; z-index: 5;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 14px;
-      background: #0d0d0f; transition: opacity 0.5s;
-    }
+    .stream-loading { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; background: #0d0d0f; transition: opacity 0.5s; }
     .stream-loading.hidden { opacity: 0; pointer-events: none; }
     .spin-ring { width: 44px; height: 44px; border: 3px solid rgba(145,71,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .load-txt { font-size: 0.73rem; color: var(--text-dim); letter-spacing: 0.08em; }
 
-    /* Ergebnis-Overlay über dem laufenden Stream */
-    .result-overlay {
-      position: absolute; inset: 0; z-index: 10;
-      background: rgba(0,0,0,0.82); backdrop-filter: blur(6px);
-      display: none; align-items: center; justify-content: center;
-      flex-direction: column; gap: 10px;
-    }
+    /* Ergebnis-Overlay */
+    .result-overlay { position: absolute; inset: 0; z-index: 10; background: rgba(0,0,0,0.82); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
     .result-overlay.visible { display: flex; }
     .overlay-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.55); }
-    .overlay-viewers {
-      font-family: 'Bebas Neue', cursive;
-      font-size: clamp(3rem,11vw,6rem); color: var(--green); line-height: 1;
-      text-shadow: 0 0 50px rgba(0,229,160,0.6);
-      animation: zoomIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    }
+    .overlay-viewers { font-family: 'Bebas Neue', cursive; font-size: clamp(3rem,11vw,6rem); color: var(--green); line-height: 1; text-shadow: 0 0 50px rgba(0,229,160,0.6); animation: zoomIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes zoomIn { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
     .overlay-sub { font-size: 0.7rem; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; margin-top: 4px; }
 
@@ -307,7 +183,7 @@
     .err-title { font-family: 'Bebas Neue', cursive; font-size: 1.4rem; color: var(--red); }
     .err-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; max-width: 380px; }
 
-    /* Stream-Meta */
+    /* Stream Meta */
     .stream-meta { display: flex; align-items: center; gap: 12px; padding: 0 4px; flex-wrap: wrap; }
     .live-badge { display: flex; align-items: center; gap: 6px; background: #e91916; color: #fff; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
     .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: blink 1.2s ease-in-out infinite; }
@@ -315,17 +191,11 @@
     .stream-name { font-size: 0.9rem; color: var(--text-primary); font-weight: 500; }
     .stream-game { margin-left: auto; font-size: 0.72rem; color: var(--text-muted); }
 
-    /* Schätz-Panel */
+    /* Guess Panel */
     .guess-panel { padding: 26px 30px; display: flex; flex-direction: column; gap: 18px; }
     .guess-title { font-family: 'Bebas Neue', cursive; font-size: 1.15rem; letter-spacing: 0.06em; color: var(--text-muted); }
     .input-row { display: flex; gap: 12px; align-items: stretch; }
-    .guess-input {
-      flex: 1; background: var(--bg-deep); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); color: var(--text-primary);
-      font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.05em;
-      padding: 10px 18px; outline: none; text-align: center;
-      transition: border-color 0.18s, box-shadow 0.18s; -moz-appearance: textfield;
-    }
+    .guess-input { flex: 1; background: var(--bg-deep); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.05em; padding: 10px 18px; outline: none; text-align: center; transition: border-color 0.18s, box-shadow 0.18s; -moz-appearance: textfield; }
     .guess-input::-webkit-outer-spin-button, .guess-input::-webkit-inner-spin-button { -webkit-appearance: none; }
     .guess-input::placeholder { color: var(--text-dim); }
     .guess-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
@@ -339,27 +209,20 @@
     .reveal-val { font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.04em; }
     .reveal-val.actual { color: var(--green); }
     .reveal-val.guess  { color: var(--text-muted); }
-
-    .feedback-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 16px; border-radius: 999px; font-size: 0.76rem; font-weight: 500; letter-spacing: 0.06em;
-      animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
+    .feedback-badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 999px; font-size: 0.76rem; font-weight: 500; letter-spacing: 0.06em; animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes popIn { from{opacity:0;transform:scale(0.65)} to{opacity:1;transform:scale(1)} }
     .feedback-badge.perfect { background:rgba(0,229,160,0.15); color:var(--green);        border:1px solid rgba(0,229,160,0.3); }
     .feedback-badge.great   { background:rgba(145,71,255,0.15); color:var(--accent-light); border:1px solid rgba(145,71,255,0.3); }
     .feedback-badge.good    { background:rgba(255,204,0,0.12);  color:var(--yellow);       border:1px solid rgba(255,204,0,0.3); }
     .feedback-badge.miss    { background:rgba(255,77,109,0.12); color:var(--red);          border:1px solid rgba(255,77,109,0.3); }
-
     .pts-gained { font-family: 'Bebas Neue', cursive; font-size: 1.3rem; color: var(--accent-light); animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-
     .acc-bar-wrap { height: 5px; background: var(--bg-deep); border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
     .acc-bar { height: 100%; border-radius: 99px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
     .action-row { display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
 
     /* ════════════════════════════════════
-       RESULTS SCREEN
+       RESULTS
     ════════════════════════════════════ */
     #screen-results { gap: 22px; padding: 8px 0 40px; }
     .results-hdr { text-align: center; padding: 28px 0 12px; }
@@ -368,7 +231,6 @@
     .big-score-wrap .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
     .big-score { font-family: 'Bebas Neue', cursive; font-size: clamp(2.8rem,10vw,4.5rem); color: var(--accent-light); line-height: 1; text-shadow: 0 0 40px var(--accent-glow); }
     .rank-txt { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
-
     .tbl { border-radius: var(--radius); overflow: hidden; }
     .tbl-hdr, .tbl-row { display: grid; grid-template-columns: 44px 1fr 110px 110px 90px; }
     .tbl-hdr { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
@@ -379,25 +241,30 @@
     .tbl-row .sc { font-size: 0.79rem; color: var(--text-primary); }
     .tbl-row .nc { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: var(--text-muted); }
     .tbl-row .ac { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: var(--green); }
-    .tbl-row .pc { font-family: 'Bebas Neue', cursify; font-size: 1.1rem; color: var(--accent-light); }
+    .tbl-row .pc { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; color: var(--accent-light); }
     .results-acts { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ════════════════════════════════════
+       MODAL
+    ════════════════════════════════════ */
+    .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+    .modal-backdrop.visible { display: flex; }
+    .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 40px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.8); animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+    .modal-icon { font-size: 2.2rem; margin-bottom: 12px; }
+    .modal h3 { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .modal p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; }
 
     /* ════════════════════════════════════
        FOOTER & TOAST
     ════════════════════════════════════ */
     footer { position: fixed; bottom: 14px; right: 18px; font-size: 0.62rem; color: var(--text-dim); z-index: 10; }
-    #toast {
-      position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(16px);
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 11px 22px;
-      font-size: 0.8rem; color: var(--text-primary);
-      opacity: 0; transition: opacity 0.3s, transform 0.3s;
-      pointer-events: none; z-index: 100; white-space: nowrap;
-    }
+    #toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 22px; font-size: 0.8rem; color: var(--text-primary); opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 100; white-space: nowrap; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 580px) {
-      .guess-panel, .setup-card, .menu-card { padding: 20px 16px; }
+      .guess-panel, .login-card, .menu-card { padding: 20px 16px; }
       .tbl-hdr, .tbl-row { grid-template-columns: 34px 1fr 80px 80px 68px; font-size: 0.69rem; padding: 10px; }
     }
   </style>
@@ -413,103 +280,41 @@
     <h1>Viewcount <span>Guessr</span></h1>
   </header>
 
-  <!-- ══════════ SETUP ══════════ -->
-  <div id="screen-setup" class="screen active">
-    <div class="card setup-card">
-      <h2>Einmalige Einrichtung</h2>
-      <p>Folge diesen 4 Schritten — dauert ca. 3 Minuten. Danach funktioniert das Spiel dauerhaft und du musst nichts mehr einrichten.</p>
+  <!-- ══ LOGIN ══ -->
+  <div id="screen-login" class="screen active">
+    <div class="card login-card">
+      <h2>Willkommen!</h2>
+      <p>Melde dich mit deinem Twitch-Account an und schätze die Zuschauerzahlen live streamender deutscher Kanäle.</p>
 
-      <!-- Schritt-Anleitung -->
-      <div class="steps">
-
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <div class="step-title">GitHub-Account erstellen &amp; Repository anlegen</div>
-            <div class="step-desc">
-              Gehe auf <a href="https://github.com/signup" target="_blank">github.com/signup</a> und erstelle einen kostenlosen Account (falls noch nicht vorhanden).<br><br>
-              Dann: <a href="https://github.com/new" target="_blank">github.com/new</a> → Repository anlegen:<br>
-              • <strong>Name:</strong> <code>viewcount-guessr</code><br>
-              • <strong>Visibility:</strong> Public ✓<br>
-              • Klicke auf <strong>Create repository</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <div class="step-title">index.html hochladen</div>
-            <div class="step-desc">
-              Im leeren Repository auf <strong>uploading an existing file</strong> klicken →
-              die <code>index.html</code> aus dem ZIP per Drag &amp; Drop hochladen →
-              <strong>Commit changes</strong> klicken.
-            </div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <div class="step-title">GitHub Pages aktivieren</div>
-            <div class="step-desc">
-              Im Repository: <strong>Settings</strong> → <strong>Pages</strong> (linke Sidebar) →
-              unter <em>Source</em> wähle <strong>Deploy from a branch</strong> →
-              Branch: <strong>main</strong>, Ordner: <strong>/ (root)</strong> →
-              <strong>Save</strong>.<br><br>
-              Nach ~60 Sekunden erscheint deine URL:<br>
-              <code id="expected-url" style="user-select:all;">https://DEIN-NAME.github.io/viewcount-guessr</code>
-            </div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-num">4</div>
-          <div class="step-body">
-            <div class="step-title">Twitch Developer App erstellen</div>
-            <div class="step-desc">
-              Öffne <a href="https://dev.twitch.tv/console/apps/create" target="_blank">dev.twitch.tv/console/apps/create</a> und logge dich ein.<br><br>
-              Formular ausfüllen:<br>
-              • <strong>Name:</strong> Viewcount Guessr<br>
-              • <strong>OAuth Redirect URL:</strong> <code id="redirect-url">wird geladen…</code><br>
-              • <strong>Kategorie:</strong> Website Integration → <strong>Erstellen</strong><br><br>
-              Dann: App → <strong>Verwalten</strong> → <strong>Client-ID</strong> kopieren → <strong>Neues Secret</strong> → <strong>Secret</strong> kopieren.
-            </div>
-            <!-- Zeigt die aktuelle Domain automatisch an -->
-            <div class="domain-badge" style="margin-top:10px;">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-              <span class="domain-val" id="site-domain">wird geladen…</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Credentials eingeben -->
-      <div class="input-group">
-        <label>Client-ID</label>
-        <input type="text" class="text-input" id="inp-cid" placeholder="abc123def456ghi789..." autocomplete="off" spellcheck="false" />
-      </div>
-      <div class="input-group" style="margin-bottom:24px;">
-        <label>Client-Secret</label>
-        <input type="password" class="text-input" id="inp-cs" placeholder="dein Client Secret..." autocomplete="off" />
-      </div>
-
-      <button class="btn-primary" id="btn-connect" style="width:100%;">
-        <span id="connect-lbl">Verbinden &amp; Spielen →</span>
+      <button class="btn-twitch-login" id="btn-twitch-login">
+        <svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+        Mit Twitch anmelden
       </button>
 
-      <div style="text-align:center;margin-top:14px;">
-        <button class="btn-ghost" id="btn-demo">Demo spielen (keine API nötig)</button>
+      <div class="login-divider"><span>oder</span></div>
+      <div style="text-align:center;">
+        <button class="btn-ghost" id="btn-demo">Demo spielen (ohne Anmeldung)</button>
+      </div>
+
+      <div class="login-info">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        Das Spiel fragt nur nach deiner Identität. Es werden keinerlei Aktionen in deinem Namen durchgeführt.
       </div>
     </div>
   </div>
 
-  <!-- ══════════ MENU ══════════ -->
+  <!-- ══ MENU ══ -->
   <div id="screen-menu" class="screen">
     <div class="card menu-card">
       <h2>Wie viele Runden?</h2>
       <p>Zufällige deutsche Twitch-Livestreams – schätze die Zuschauer!</p>
+      <div class="user-badge" id="user-badge" style="display:none;">
+        <img id="user-avatar" src="" alt="Avatar" />
+        <div>
+          <div class="user-badge-name" id="user-disp">—</div>
+          <div class="user-badge-sub">Mit Twitch angemeldet ✓</div>
+        </div>
+      </div>
       <div class="round-label">Runden auswählen</div>
       <div class="round-options">
         <button class="round-btn" data-r="5">5</button>
@@ -518,12 +323,12 @@
       </div>
       <button class="btn-primary" id="btn-start">▶ &nbsp;Spiel starten</button>
       <div style="margin-top:14px;">
-        <button class="btn-ghost" id="btn-back-setup">Einstellungen ändern</button>
+        <button class="btn-ghost" id="btn-logout">Abmelden</button>
       </div>
     </div>
   </div>
 
-  <!-- ══════════ GAME ══════════ -->
+  <!-- ══ GAME ══ -->
   <div id="screen-game" class="screen">
 
     <div class="top-bar">
@@ -537,12 +342,12 @@
       </div>
     </div>
 
-    <!-- Bestätigungs-Modal: Hauptmenü verlassen? -->
+    <!-- Hauptmenü-Bestätigungs-Modal -->
     <div class="modal-backdrop" id="modal-menu">
       <div class="modal">
         <div class="modal-icon">🏠</div>
         <h3>Zum Hauptmenü?</h3>
-        <p>Dein aktueller Spielfortschritt geht verloren. Möchtest du wirklich ins Hauptmenü zurückkehren?</p>
+        <p>Dein aktueller Spielfortschritt geht verloren. Möchtest du wirklich zurückkehren?</p>
         <div class="modal-actions">
           <button class="btn-secondary" id="modal-cancel">Weiterspielen</button>
           <button class="btn-primary" id="modal-confirm">Ja, Hauptmenü</button>
@@ -557,18 +362,13 @@
       <button class="btn-secondary" id="btn-retry">Erneut versuchen</button>
     </div>
 
-    <!--
-      Twitch Player Embed.
-      parent= wird automatisch auf window.location.hostname gesetzt.
-      Auf Netlify: xyz.netlify.app → Twitch erlaubt den Embed nativ. ✓
-    -->
     <div class="stream-wrap">
       <div class="stream-loading" id="stream-loading">
         <div class="spin-ring"></div>
-        <span class="load-txt" id="load-txt">Lade Stream…</span>
+        <span class="load-txt">Lade Stream…</span>
       </div>
       <iframe id="twitch-iframe" allowfullscreen allow="autoplay; fullscreen" src="about:blank"></iframe>
-      <!-- Blur-Balken über der Twitch-Zuschauerzahl (oben links im Player) -->
+      <!-- Glasblur über Twitch-Banner mit Zuschauerzahl -->
       <div class="viewer-blur-bar" id="viewer-blur-bar"></div>
       <div class="result-overlay" id="result-overlay">
         <span class="overlay-label">Echte Zuschauer</span>
@@ -608,7 +408,7 @@
     </div>
   </div>
 
-  <!-- ══════════ RESULTS ══════════ -->
+  <!-- ══ RESULTS ══ -->
   <div id="screen-results" class="screen">
     <div class="results-hdr">
       <h2>Spielende!</h2>
@@ -622,14 +422,23 @@
     <div class="results-acts"><button class="btn-primary" id="btn-again">↩ Nochmal spielen</button></div>
   </div>
 
-</div><!-- /.wrapper -->
-
+</div>
 <footer>made by kieskauer</footer>
 <div id="toast"></div>
 
 <script>
 /* ══════════════════════════════════════════════
-   DEMO-DATEN (Fallback ohne API)
+   KONFIGURATION
+   ▸ Trage hier deine Twitch Client-ID ein.
+   ▸ In der Twitch Developer Console muss als
+     OAuth Redirect URL deine GitHub-Pages-URL
+     eingetragen sein, z.B.:
+     https://DEIN-NAME.github.io
+══════════════════════════════════════════════ */
+const TWITCH_CLIENT_ID = 'v3hih0hj6dlk4nvq2h6c1a3k61ibro';
+
+/* ══════════════════════════════════════════════
+   DEMO-DATEN
 ══════════════════════════════════════════════ */
 const DEMO = [
   { channel:'Montana_Black', login:'montana_black', game:'Just Chatting',     viewers:18400 },
@@ -652,395 +461,288 @@ const DEMO = [
 /* ══════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════ */
-const G = {
-  demo:false, clientId:'', token:'',
-  pool:[], used:[], rounds:10, round:0,
-  score:0, history:[], current:null, submitted:false,
-};
-
-/* ══════════════════════════════════════════════
-   HILFSFUNKTIONEN
-══════════════════════════════════════════════ */
+const G = { demo:false, clientId:'', token:'', pool:[], used:[], rounds:10, round:0, score:0, history:[], current:null, submitted:false };
 const $  = id => document.getElementById(id);
 const fN = n  => n.toLocaleString('de-DE');
 
 function shuffle(a) {
-  const b=[...a];
-  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
-  return b;
+  const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b;
 }
-
-function calcPts(g, a) {
-  if(!a) return 0;
-  return Math.max(0, Math.round(1000 * Math.exp(-3.5 * Math.abs(g-a) / a)));
-}
-
+function calcPts(g,a) { if(!a)return 0; return Math.max(0,Math.round(1000*Math.exp(-3.5*Math.abs(g-a)/a))); }
 function getFeedback(p) {
-  if(p >= 900) return { txt:'🔥 Perfekt!',      cls:'perfect' };
-  if(p >= 600) return { txt:'⚡ Sehr nah!',     cls:'great'   };
-  if(p >= 250) return { txt:'👍 Ganz gut!',     cls:'good'    };
-  return             { txt:'💀 Weit daneben!', cls:'miss'    };
+  if(p>=900)return{txt:'🔥 Perfekt!',cls:'perfect'};
+  if(p>=600)return{txt:'⚡ Sehr nah!',cls:'great'};
+  if(p>=250)return{txt:'👍 Ganz gut!',cls:'good'};
+  return{txt:'💀 Weit daneben!',cls:'miss'};
 }
-
-function toast(msg, ms=2800) {
-  const t=$('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), ms);
-}
-
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  $(id).classList.add('active');
-}
+function toast(msg,ms=2800){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),ms);}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
 
 /* ══════════════════════════════════════════════
-   DOMAIN ERKENNUNG
-   Zeigt die aktuelle Domain automatisch an.
-   Auf GitHub Pages: username.github.io/repo
-   → parent=username.github.io ✓
+   TWITCH OAuth – Implicit Grant Flow
+   ─────────────────────────────────────────────
+   1. User klickt Login → Browser öffnet Twitch
+   2. User loggt sich ein, erteilt Erlaubnis
+   3. Twitch leitet zurück mit #access_token=...
+   4. Wir lesen Token aus Hash → API nutzen
+   Kein Client-Secret nötig!
 ══════════════════════════════════════════════ */
-(function initDomainInfo() {
-  const host   = window.location.hostname || 'localhost';
-  const origin = window.location.origin;
-
-  // Schritt 4: OAuth Redirect URL = komplette Origin
-  const redirectEl = $('redirect-url');
-  if(redirectEl) redirectEl.textContent = origin;
-
-  // Domain-Badge: nur der Hostname (das ist der Twitch parent-Parameter)
-  const domainEl = $('site-domain');
-  if(domainEl) domainEl.textContent = host;
-
-  // Erwartete GitHub-Pages URL vorausfüllen (nur wenn noch localhost)
-  const expectedEl = $('expected-url');
-  if(expectedEl && host === 'localhost') {
-    expectedEl.textContent = 'https://DEIN-NAME.github.io/viewcount-guessr';
-  } else if(expectedEl) {
-    expectedEl.textContent = origin;
-  }
-})();
-
-/* ══════════════════════════════════════════════
-   ZUGANGSDATEN SPEICHERN / LADEN
-   Werden im localStorage gesichert damit der
-   User sie nicht bei jedem Besuch neu eingeben muss.
-══════════════════════════════════════════════ */
-function saveCredentials(cid, cs) {
-  try { localStorage.setItem('vg_cid', cid); localStorage.setItem('vg_cs', cs); } catch(e){}
-}
-function loadCredentials() {
-  try { return { cid: localStorage.getItem('vg_cid')||'', cs: localStorage.getItem('vg_cs')||'' }; } catch(e){ return{cid:'',cs:''}; }
+function getRedirectUri() {
+  return window.location.origin + window.location.pathname;
 }
 
-// Gespeicherte Credentials beim Laden eintragen
-(function prefill() {
-  const {cid,cs} = loadCredentials();
-  if(cid) $('inp-cid').value = cid;
-  if(cs)  $('inp-cs').value  = cs;
-})();
+function startTwitchLogin() {
+  const p = new URLSearchParams({
+    client_id:     TWITCH_CLIENT_ID,
+    redirect_uri:  getRedirectUri(),
+    response_type: 'token',
+    scope:         'user:read:email',
+  });
+  window.location.href = `https://id.twitch.tv/oauth2/authorize?${p}`;
+}
 
-/* ══════════════════════════════════════════════
-   TWITCH AUTH – App Access Token
-   Client Credentials Flow: kein User-Login nötig.
-══════════════════════════════════════════════ */
-async function getAppToken(cid, cs) {
-  const r = await fetch(
-    `https://id.twitch.tv/oauth2/token?client_id=${encodeURIComponent(cid)}&client_secret=${encodeURIComponent(cs)}&grant_type=client_credentials`,
-    { method: 'POST' }
-  );
-  if(!r.ok){ const e=await r.json().catch(()=>{}); throw new Error(e?.message || `Auth-Fehler ${r.status}`); }
+function extractTokenFromHash() {
+  const params = new URLSearchParams(window.location.hash.substring(1));
+  const token  = params.get('access_token');
+  if(token) history.replaceState(null, '', window.location.pathname);
+  return token || null;
+}
+
+function saveToken(t) { try{ localStorage.setItem('vg_token', t); }catch(e){} }
+function loadToken()  { try{ return localStorage.getItem('vg_token'); }catch(e){ return null; } }
+function clearToken() { try{ localStorage.removeItem('vg_token'); }catch(e){} }
+
+async function validateToken(token) {
+  const r = await fetch('https://id.twitch.tv/oauth2/validate', { headers:{'Authorization':`OAuth ${token}`} });
+  return r.ok;
+}
+
+async function fetchUserProfile(token) {
+  const r = await fetch('https://api.twitch.tv/helix/users', {
+    headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${token}`}
+  });
+  if(!r.ok) return null;
   const d = await r.json();
-  if(!d.access_token) throw new Error('Kein Access Token erhalten.');
-  return d.access_token;
+  return d.data?.[0] || null;
 }
 
+/* ── Beim Seitenstart: Token aus Hash oder localStorage prüfen ── */
+(async function initAuth() {
+  let token = extractTokenFromHash();
+  if(token) {
+    saveToken(token);
+  } else {
+    token = loadToken();
+    if(token) {
+      const ok = await validateToken(token).catch(()=>false);
+      if(!ok) { clearToken(); token = null; }
+    }
+  }
+
+  if(token) {
+    G.token = token; G.clientId = TWITCH_CLIENT_ID; G.demo = false;
+
+    // User-Profil für Badge laden
+    const user = await fetchUserProfile(token).catch(()=>null);
+    if(user) {
+      $('user-avatar').src = user.profile_image_url || '';
+      $('user-disp').textContent = user.display_name || user.login;
+      $('user-badge').style.display = 'flex';
+    }
+
+    // Streams vorab laden
+    G.pool = await loadGermanStreams().catch(()=>[]);
+    show('screen-menu');
+  }
+  // Kein Token → Login-Screen bleibt sichtbar
+})();
+
+/* ── Login Button ── */
+$('btn-twitch-login').addEventListener('click', () => {
+  if(TWITCH_CLIENT_ID === 'DEINE_CLIENT_ID_HIER') {
+    toast('⚠️ Client-ID fehlt! Bitte in den Code eintragen.', 5000);
+    return;
+  }
+  const btn = $('btn-twitch-login');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>&nbsp;Weiterleitung zu Twitch…';
+  startTwitchLogin();
+});
+
+/* ── Demo Button ── */
+$('btn-demo').addEventListener('click', () => {
+  G.demo=true; G.pool=shuffle([...DEMO]);
+  $('user-badge').style.display='none';
+  show('screen-menu');
+});
+
+/* ── Abmelden ── */
+$('btn-logout').addEventListener('click', () => {
+  clearToken();
+  G.token=''; G.clientId=''; G.demo=false;
+  $('user-badge').style.display='none';
+  show('screen-login');
+});
+
 /* ══════════════════════════════════════════════
-   TWITCH HELIX API – Deutsche Livestreams
-   language=de → nur Kanäle die Sprache auf DE gesetzt haben.
-   Twitch gibt ausschließlich live Kanäle zurück.
+   TWITCH HELIX API – Deutsche Live-Streams
 ══════════════════════════════════════════════ */
 async function loadGermanStreams() {
   const r = await fetch('https://api.twitch.tv/helix/streams?language=de&first=100', {
-    headers: { 'Client-Id': G.clientId, 'Authorization': `Bearer ${G.token}` }
+    headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${G.token}`}
   });
-  if(!r.ok){ const e=await r.json().catch(()=>{}); throw new Error(e?.message || `API-Fehler ${r.status}`); }
+  if(!r.ok){ const e=await r.json().catch(()=>{}); throw new Error(e?.message||`API ${r.status}`); }
   const d = await r.json();
-  return shuffle(
-    (d.data||[])
-      .filter(s => s.viewer_count > 0)
-      .map(s => ({ channel:s.user_name, login:s.user_login, game:s.game_name||'Unbekannt', viewers:s.viewer_count }))
-  );
+  return shuffle((d.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
 }
-
-/* ══════════════════════════════════════════════
-   TWITCH EMBED – iframe mit korrektem parent
-   parent = window.location.hostname
-   → auf Netlify: xyz.netlify.app  ✓ (von Twitch nativ erlaubt)
-   → auf localhost                 ✓ (von Twitch für Entwicklung erlaubt)
-══════════════════════════════════════════════ */
-function loadStream(login) {
-  $('stream-loading').classList.remove('hidden');
-  $('load-txt').textContent = 'Lade Stream…';
-  $('result-overlay').classList.remove('visible');
-
-  const iframe = $('twitch-iframe');
-  // Aktuellen Hostnamen als parent setzen – genau das erwartet Twitch
-  const parent = window.location.hostname || 'localhost';
-  const src = `https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
-
-  // Lade-Overlay ausblenden wenn iframe geladen hat
-  iframe.onload = () => setTimeout(() => $('stream-loading').classList.add('hidden'), 1200);
-  // Harter Fallback
-  setTimeout(() => $('stream-loading').classList.add('hidden'), 14000);
-
-  iframe.src = src;
-}
-
-/* ══════════════════════════════════════════════
-   SETUP
-══════════════════════════════════════════════ */
-$('btn-connect').addEventListener('click', async () => {
-  const cid = $('inp-cid').value.trim();
-  const cs  = $('inp-cs').value.trim();
-  if(!cid || !cs) { toast('Bitte Client-ID und Client-Secret eingeben.'); return; }
-
-  const lbl = $('connect-lbl');
-  lbl.innerHTML = '<span style="display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;"></span>Verbinde mit Twitch…';
-  $('btn-connect').disabled = true;
-
-  try {
-    G.token    = await getAppToken(cid, cs);
-    G.clientId = cid;
-    G.demo     = false;
-    G.pool     = await loadGermanStreams();
-    if(!G.pool.length) throw new Error('Momentan sind keine deutschen Streams live. Bitte später erneut versuchen.');
-    saveCredentials(cid, cs);  // für nächsten Besuch speichern
-    show('screen-menu');
-  } catch(e) {
-    toast('❌ ' + e.message, 5000);
-  } finally {
-    lbl.textContent = 'Verbinden & Spielen →';
-    $('btn-connect').disabled = false;
-  }
-});
-
-$('btn-demo').addEventListener('click', () => {
-  G.demo = true;
-  G.pool = shuffle([...DEMO]);
-  show('screen-menu');
-});
-
-$('btn-back-setup').addEventListener('click', () => show('screen-setup'));
-
-/* ══════════════════════════════════════════════
-   HAUPTMENÜ-BUTTON & BESTÄTIGUNGS-MODAL
-══════════════════════════════════════════════ */
-$('btn-to-menu').addEventListener('click', () => {
-  // Modal anzeigen
-  $('modal-menu').classList.add('visible');
-});
-
-$('modal-cancel').addEventListener('click', () => {
-  // Abbrechen – zurück zum Spiel
-  $('modal-menu').classList.remove('visible');
-});
-
-$('modal-confirm').addEventListener('click', () => {
-  // Bestätigt – Spiel zurücksetzen und zum Menü
-  $('modal-menu').classList.remove('visible');
-  // iframe leeren damit der Stream stoppt
-  $('twitch-iframe').src = 'about:blank';
-  show('screen-menu');
-});
-
-// Klick auf Backdrop schließt Modal auch
-$('modal-menu').addEventListener('click', (e) => {
-  if(e.target === $('modal-menu')) $('modal-menu').classList.remove('visible');
-});
 
 /* ══════════════════════════════════════════════
    MENU
 ══════════════════════════════════════════════ */
-document.querySelectorAll('.round-btn').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.round-btn').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    G.rounds = parseInt(b.dataset.r);
-  });
+document.querySelectorAll('.round-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.round-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.rounds=parseInt(b.dataset.r);});
+});
+$('btn-start').addEventListener('click',()=>{
+  G.round=0;G.score=0;G.used=[];G.history=[];
+  if(G.demo) G.pool=shuffle([...DEMO]);
+  $('rt').textContent=G.rounds;$('sv').textContent='0';
+  show('screen-game');nextRound();
 });
 
-$('btn-start').addEventListener('click', () => {
-  G.round=0; G.score=0; G.used=[]; G.history=[];
-  if(G.demo) G.pool = shuffle([...DEMO]);
-  $('rt').textContent = G.rounds;
-  $('sv').textContent = '0';
-  show('screen-game');
-  nextRound();
+/* ══════════════════════════════════════════════
+   HAUPTMENÜ-MODAL
+══════════════════════════════════════════════ */
+$('btn-to-menu').addEventListener('click',()=>$('modal-menu').classList.add('visible'));
+$('modal-cancel').addEventListener('click',()=>$('modal-menu').classList.remove('visible'));
+$('modal-confirm').addEventListener('click',()=>{
+  $('modal-menu').classList.remove('visible');
+  $('twitch-iframe').src='about:blank';
+  show('screen-menu');
 });
+$('modal-menu').addEventListener('click',e=>{if(e.target===$('modal-menu'))$('modal-menu').classList.remove('visible');});
+
+/* ══════════════════════════════════════════════
+   TWITCH EMBED
+══════════════════════════════════════════════ */
+function loadStream(login) {
+  $('stream-loading').classList.remove('hidden');
+  $('result-overlay').classList.remove('visible');
+  $('viewer-blur-bar').classList.remove('hidden');
+
+  const iframe = $('twitch-iframe');
+  const parent = window.location.hostname || 'localhost';
+  const src = `https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
+
+  iframe.onload = () => setTimeout(()=>$('stream-loading').classList.add('hidden'), 1200);
+  setTimeout(()=>$('stream-loading').classList.add('hidden'), 14000);
+  iframe.src = src;
+}
 
 /* ══════════════════════════════════════════════
    RUNDEN
 ══════════════════════════════════════════════ */
 async function nextRound() {
-  G.submitted = false;
-  $('g-inp').value=''; $('g-inp').disabled=false;
-  $('btn-sub').disabled=false;
-  $('res-area').classList.remove('visible');
-  $('btn-next').style.display='none';
-  $('err-box').classList.remove('visible');
-  $('result-overlay').classList.remove('visible');
-  $('viewer-blur-bar').classList.remove('hidden'); // Blur-Balken wieder einblenden
-  $('s-name').textContent='—'; $('s-game').textContent='—';
-  $('rc').textContent = G.round + 1;
+  G.submitted=false;
+  $('g-inp').value='';$('g-inp').disabled=false;$('btn-sub').disabled=false;
+  $('res-area').classList.remove('visible');$('btn-next').style.display='none';
+  $('err-box').classList.remove('visible');$('result-overlay').classList.remove('visible');
+  $('viewer-blur-bar').classList.remove('hidden');
+  $('s-name').textContent='—';$('s-game').textContent='—';$('rc').textContent=G.round+1;
 
   let stream;
-  try { stream = await pickStream(); }
-  catch(e) { showErr(e.message); return; }
-  if(!stream) { showErr('Keine weiteren deutschen Livestreams verfügbar.'); return; }
+  try{stream=await pickStream();}catch(e){showErr(e.message);return;}
+  if(!stream){showErr('Keine weiteren deutschen Livestreams verfügbar.');return;}
 
-  G.current = stream; G.round++;
-  $('rc').textContent    = G.round;
-  $('s-name').textContent = stream.channel;
-  $('s-game').textContent = stream.game;
-
+  G.current=stream;G.round++;
+  $('rc').textContent=G.round;$('s-name').textContent=stream.channel;$('s-game').textContent=stream.game;
   loadStream(stream.login);
   $('g-inp').focus();
 }
 
 async function pickStream() {
-  if(G.used.length >= G.pool.length) {
-    if(!G.demo) {
-      G.pool = await loadGermanStreams();
-      if(!G.pool.length) throw new Error('Keine deutschen Streams gerade live.');
-    } else {
-      G.pool = shuffle([...DEMO]);
-    }
-    G.used = [];
+  if(G.used.length>=G.pool.length) {
+    if(!G.demo){G.pool=await loadGermanStreams();if(!G.pool.length)throw new Error('Keine deutschen Streams live.');}
+    else G.pool=shuffle([...DEMO]);
+    G.used=[];
   }
-  const avail = G.pool.map((_,i)=>i).filter(i=>!G.used.includes(i));
-  if(!avail.length) return null;
-  const idx = avail[Math.floor(Math.random() * avail.length)];
-  G.used.push(idx);
-  return G.pool[idx];
+  const avail=G.pool.map((_,i)=>i).filter(i=>!G.used.includes(i));
+  if(!avail.length)return null;
+  const idx=avail[Math.floor(Math.random()*avail.length)];
+  G.used.push(idx);return G.pool[idx];
 }
 
-function showErr(msg) {
-  $('stream-loading').classList.add('hidden');
-  $('err-msg').textContent = msg;
-  $('err-box').classList.add('visible');
-}
-$('btn-retry').addEventListener('click', nextRound);
+function showErr(msg){$('stream-loading').classList.add('hidden');$('err-msg').textContent=msg;$('err-box').classList.add('visible');}
+$('btn-retry').addEventListener('click',nextRound);
 
 /* ══════════════════════════════════════════════
-   SCHÄTZUNG EINREICHEN
+   SCHÄTZUNG
 ══════════════════════════════════════════════ */
-$('btn-sub').addEventListener('click', submitGuess);
-$('g-inp').addEventListener('keydown', e => { if(e.key==='Enter') submitGuess(); });
+$('btn-sub').addEventListener('click',submitGuess);
+$('g-inp').addEventListener('keydown',e=>{if(e.key==='Enter')submitGuess();});
 
 function submitGuess() {
-  if(G.submitted) return;
-  const guess = parseInt($('g-inp').value.trim());
-  if(isNaN(guess) || guess < 0) { toast('Bitte eine gültige Zahl eingeben!'); return; }
+  if(G.submitted)return;
+  const guess=parseInt($('g-inp').value.trim());
+  if(isNaN(guess)||guess<0){toast('Bitte eine gültige Zahl eingeben!');return;}
+  G.submitted=true;$('g-inp').disabled=true;$('btn-sub').disabled=true;
 
-  G.submitted = true;
-  $('g-inp').disabled = true;
-  $('btn-sub').disabled = true;
+  const actual=G.current.viewers,pts=calcPts(guess,actual),fb=getFeedback(pts);
+  G.score+=pts;G.history.push({channel:G.current.channel,game:G.current.game,guess,actual,pts});
 
-  const actual = G.current.viewers;
-  const pts    = calcPts(guess, actual);
-  const fb     = getFeedback(pts);
-
-  G.score += pts;
-  G.history.push({ channel:G.current.channel, game:G.current.game, guess, actual, pts });
-
-  // Echte Zuschauerzahl als großes Overlay über dem laufenden Stream
-  $('overlay-viewers').textContent = fN(actual);
+  $('overlay-viewers').textContent=fN(actual);
   $('result-overlay').classList.add('visible');
-  $('viewer-blur-bar').classList.add('hidden'); // Blur-Balken ausblenden nach Submit
+  $('viewer-blur-bar').classList.add('hidden');
 
-  // Panel-Ergebnis befüllen
-  $('rv-guess').textContent   = fN(guess);
-  $('rv-actual').textContent  = fN(actual);
-  $('fb-badge').textContent   = fb.txt;
-  $('fb-badge').className     = `feedback-badge ${fb.cls}`;
-  $('pts-gained').textContent = `+${fN(pts)} Punkte`;
+  $('rv-guess').textContent=fN(guess);$('rv-actual').textContent=fN(actual);
+  $('fb-badge').textContent=fb.txt;$('fb-badge').className=`feedback-badge ${fb.cls}`;
+  $('pts-gained').textContent=`+${fN(pts)} Punkte`;
 
-  const pct = Math.min(100, (pts/1000)*100);
-  $('acc-bar').style.width      = pct + '%';
-  $('acc-bar').style.background = pct>=90?'var(--green)':pct>=60?'var(--accent-light)':pct>=25?'var(--yellow)':'var(--red)';
+  const pct=Math.min(100,(pts/1000)*100);
+  $('acc-bar').style.width=pct+'%';
+  $('acc-bar').style.background=pct>=90?'var(--green)':pct>=60?'var(--accent-light)':pct>=25?'var(--yellow)':'var(--red)';
 
-  $('sv').textContent = fN(G.score);
-  $('sv').classList.add('bump');
-  setTimeout(() => $('sv').classList.remove('bump'), 380);
+  $('sv').textContent=fN(G.score);$('sv').classList.add('bump');
+  setTimeout(()=>$('sv').classList.remove('bump'),380);
 
   $('res-area').classList.add('visible');
-  const isLast = G.round >= G.rounds;
-  $('btn-next').textContent   = isLast ? 'Ergebnis ansehen →' : 'Nächster Stream →';
-  $('btn-next').style.display = 'inline-flex';
+  const isLast=G.round>=G.rounds;
+  $('btn-next').textContent=isLast?'Ergebnis ansehen →':'Nächster Stream →';
+  $('btn-next').style.display='inline-flex';
   playSound(pts);
 }
 
-$('btn-next').addEventListener('click', () => {
-  if(G.round >= G.rounds) showResults(); else nextRound();
-});
+$('btn-next').addEventListener('click',()=>{if(G.round>=G.rounds)showResults();else nextRound();});
 
 /* ══════════════════════════════════════════════
-   ERGEBNIS-SCREEN
+   ERGEBNISSE
 ══════════════════════════════════════════════ */
-function showResults() {
-  show('screen-results');
-  $('final-sc').textContent = fN(G.score);
-  const avg = G.score / G.rounds;
-  $('rank-txt').textContent =
-    avg>=800 ? '🏆 Absoluter Profi – bist du ein Twitch-Insider?' :
-    avg>=600 ? '🎯 Sehr gut! Du kennst die deutschen Streams.' :
-    avg>=350 ? '👍 Solide Leistung – weiter so!' :
-               '📺 Schau mehr deutsche Streams, dann klappt\'s besser!';
-
-  $('tbl-rows').innerHTML = '';
-  G.history.forEach((r, i) => {
-    const row = document.createElement('div');
-    row.className = 'tbl-row';
-    row.innerHTML = `
-      <span class="rn">${i+1}</span>
-      <span class="sc">${r.channel}<br><span style="color:var(--text-dim);font-size:0.67rem;">${r.game}</span></span>
-      <span class="nc">${fN(r.guess)}</span>
-      <span class="ac">${fN(r.actual)}</span>
-      <span class="pc">${fN(r.pts)}</span>
-    `;
+function showResults(){
+  show('screen-results');$('final-sc').textContent=fN(G.score);
+  const avg=G.score/G.rounds;
+  $('rank-txt').textContent=avg>=800?'🏆 Absoluter Profi – bist du ein Twitch-Insider?':avg>=600?'🎯 Sehr gut! Du kennst die deutschen Streams.':avg>=350?'👍 Solide Leistung – weiter so!':'📺 Schau mehr deutsche Streams, dann klappt\'s besser!';
+  $('tbl-rows').innerHTML='';
+  G.history.forEach((r,i)=>{
+    const row=document.createElement('div');row.className='tbl-row';
+    row.innerHTML=`<span class="rn">${i+1}</span><span class="sc">${r.channel}<br><span style="color:var(--text-dim);font-size:0.67rem;">${r.game}</span></span><span class="nc">${fN(r.guess)}</span><span class="ac">${fN(r.actual)}</span><span class="pc">${fN(r.pts)}</span>`;
     $('tbl-rows').appendChild(row);
   });
 }
-
-$('btn-again').addEventListener('click', () => show('screen-menu'));
+$('btn-again').addEventListener('click',()=>show('screen-menu'));
 
 /* ══════════════════════════════════════════════
-   SOUND (Web Audio API)
+   SOUND
 ══════════════════════════════════════════════ */
-let actx = null;
-function playSound(pts) {
-  try {
-    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-    const o=actx.createOscillator(), g=actx.createGain();
-    o.connect(g); g.connect(actx.destination);
+let actx=null;
+function playSound(pts){
+  try{
+    if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);
     const t=actx.currentTime;
-    if(pts>=900) {
-      o.frequency.setValueAtTime(440,t); o.frequency.setValueAtTime(554,t+.1); o.frequency.setValueAtTime(660,t+.2);
-      g.gain.setValueAtTime(.15,t); g.gain.exponentialRampToValueAtTime(.001,t+.65);
-      o.start(t); o.stop(t+.65);
-    } else if(pts>=500) {
-      o.frequency.setValueAtTime(392,t); o.frequency.setValueAtTime(523,t+.12);
-      g.gain.setValueAtTime(.12,t); g.gain.exponentialRampToValueAtTime(.001,t+.4);
-      o.start(t); o.stop(t+.4);
-    } else if(pts>=200) {
-      o.frequency.setValueAtTime(330,t);
-      g.gain.setValueAtTime(.1,t); g.gain.exponentialRampToValueAtTime(.001,t+.3);
-      o.start(t); o.stop(t+.3);
-    } else {
-      o.type='sawtooth'; o.frequency.setValueAtTime(110,t);
-      g.gain.setValueAtTime(.07,t); g.gain.exponentialRampToValueAtTime(.001,t+.45);
-      o.start(t); o.stop(t+.45);
-    }
-  } catch(e) {}
+    if(pts>=900){o.frequency.setValueAtTime(440,t);o.frequency.setValueAtTime(554,t+.1);o.frequency.setValueAtTime(660,t+.2);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.65);o.start(t);o.stop(t+.65);}
+    else if(pts>=500){o.frequency.setValueAtTime(392,t);o.frequency.setValueAtTime(523,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.start(t);o.stop(t+.4);}
+    else if(pts>=200){o.frequency.setValueAtTime(330,t);g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3);}
+    else{o.type='sawtooth';o.frequency.setValueAtTime(110,t);g.gain.setValueAtTime(.07,t);g.gain.exponentialRampToValueAtTime(.001,t+.45);o.start(t);o.stop(t+.45);}
+  }catch(e){}
 }
 </script>
 </body>
