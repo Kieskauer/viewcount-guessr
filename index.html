@@ -587,14 +587,40 @@ $('btn-logout').addEventListener('click', () => {
 
 /* ══════════════════════════════════════════════
    TWITCH HELIX API – Deutsche Live-Streams
+   Lädt mehrere Seiten (bis zu 500 Streams) damit
+   auch kleine Streamer vorkommen, nicht nur die Top 100.
 ══════════════════════════════════════════════ */
 async function loadGermanStreams() {
-  const r = await fetch('https://api.twitch.tv/helix/streams?language=de&first=100', {
-    headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${G.token}`}
-  });
-  if(!r.ok){ const e=await r.json().catch(()=>{}); throw new Error(e?.message||`API ${r.status}`); }
-  const d = await r.json();
-  return shuffle((d.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
+  const allStreams = [];
+  let cursor = null;
+  const maxPages = 5; // 5 × 100 = bis zu 500 Streams
+
+  for (let page = 0; page < maxPages; page++) {
+    const url = 'https://api.twitch.tv/helix/streams?language=de&first=100' +
+                (cursor ? `&after=${cursor}` : '');
+
+    const r = await fetch(url, {
+      headers: { 'Client-Id': TWITCH_CLIENT_ID, 'Authorization': `Bearer ${G.token}` }
+    });
+    if (!r.ok) { const e = await r.json().catch(()=>{}); throw new Error(e?.message || `API ${r.status}`); }
+
+    const d = await r.json();
+    const streams = (d.data || []).filter(s => s.viewer_count > 0);
+    allStreams.push(...streams);
+
+    // Kein weiterer Cursor = keine weiteren Seiten
+    cursor = d.pagination?.cursor;
+    if (!cursor) break;
+  }
+
+  return shuffle(
+    allStreams.map(s => ({
+      channel: s.user_name,
+      login:   s.user_login,
+      game:    s.game_name || 'Unbekannt',
+      viewers: s.viewer_count,
+    }))
+  );
 }
 
 /* ══════════════════════════════════════════════
