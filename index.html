@@ -904,7 +904,10 @@ async function nextRound() {
   $('s-game').textContent=stream.game;
 
   loadStream(stream.login);
-  connectChat(stream.login); // Chat-Connection für diesen Kanal
+  // Chat des HOSTS verbinden – nur wenn eingeloggt (nicht im Demo-Modus)
+  if (!G.demo && G.userName) {
+    connectChat(G.userName.toLowerCase());
+  }
   $('g-inp').focus();
 }
 
@@ -1025,4 +1028,3 @@ function playSound(pts){
 </script>
 </body>
 </html>
-
