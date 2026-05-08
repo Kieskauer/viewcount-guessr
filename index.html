@@ -668,6 +668,9 @@ function parseChatMessage(line) {
   // Jeder User darf pro Runde nur einmal tippen
   if (MP.roundGuesses[userLogin]) return;
 
+  // Keine neuen Guesses mehr wenn Streamer bereits submitted hat
+  if (G.submitted) return;
+
   // Streamer selbst nicht als Chat-Zuschauer zählen
   if (G.current && userLogin === G.current.login.toLowerCase()) return;
 
