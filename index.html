@@ -899,11 +899,22 @@ function loadStream(login) {
   $('stream-loading').classList.remove('hidden');
   $('result-overlay').classList.remove('visible');
   $('viewer-blur-bar').classList.remove('hidden');
-  const iframe=$('twitch-iframe');
-  const parent=window.location.hostname||'localhost';
-  iframe.onload=()=>setTimeout(()=>$('stream-loading').classList.add('hidden'),1200);
-  setTimeout(()=>$('stream-loading').classList.add('hidden'),14000);
-  iframe.src=`https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
+
+  const iframe = $('twitch-iframe');
+  const parent = window.location.hostname || 'localhost';
+  const src = `https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
+
+  // Alten Stream sofort stoppen, dann neuen laden
+  iframe.src = 'about:blank';
+  iframe.onload = null;
+
+  setTimeout(() => {
+    iframe.onload = () => setTimeout(() => $('stream-loading').classList.add('hidden'), 800);
+    iframe.src = src;
+  }, 50);
+
+  // Spinner spätestens nach 8 Sek ausblenden
+  setTimeout(() => $('stream-loading').classList.add('hidden'), 8000);
 }
 
 /* ══════════════════════════════════════════════
@@ -925,8 +936,6 @@ async function nextRound() {
 
   G.current=stream;G.round++;
   $('rc').textContent=G.round;
-  $('s-name').textContent=stream.channel;
-  $('s-game').textContent=stream.game;
 
   loadStream(stream.login);
   // Chat des HOSTS verbinden – nur wenn eingeloggt (nicht im Demo-Modus)
