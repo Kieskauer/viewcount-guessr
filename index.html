@@ -824,18 +824,46 @@ $('btn-logout').addEventListener('click',()=>{clearToken();G.token='';G.clientId
 
 /* ══════════════════════════════════════════════
    API – Deutsche Streams laden
+   Erste Seite (100 Streams) sofort → Spiel startet schnell.
+   Weitere Seiten werden im Hintergrund nachgeladen.
 ══════════════════════════════════════════════ */
 async function loadGermanStreams() {
-  const all=[];let cursor=null;
-  for(let p=0;p<5;p++){
-    const url='https://api.twitch.tv/helix/streams?language=de&first=100'+(cursor?`&after=${cursor}`:'');
-    const r=await fetch(url,{headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
-    if(!r.ok){const e=await r.json().catch(()=>{});throw new Error(e?.message||`API ${r.status}`);}
-    const d=await r.json();
-    all.push(...(d.data||[]).filter(s=>s.viewer_count>0));
-    cursor=d.pagination?.cursor;if(!cursor)break;
+  // Nur erste Seite laden für schnellen Start
+  const url = 'https://api.twitch.tv/helix/streams?language=de&first=100';
+  const r = await fetch(url, { headers: { 'Client-Id': TWITCH_CLIENT_ID, 'Authorization': `Bearer ${G.token}` } });
+  if (!r.ok) { const e = await r.json().catch(()=>{}); throw new Error(e?.message || `API ${r.status}`); }
+  const d = await r.json();
+  const streams = shuffle((d.data || []).filter(s => s.viewer_count > 0).map(s => ({
+    channel: s.user_name, login: s.user_login,
+    game: s.game_name || 'Unbekannt', viewers: s.viewer_count,
+  })));
+
+  // Weitere Seiten asynchron im Hintergrund nachladen
+  if (d.pagination?.cursor) {
+    loadMoreStreamsInBackground(d.pagination.cursor);
   }
-  return shuffle(all.map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
+
+  return streams;
+}
+
+async function loadMoreStreamsInBackground(startCursor) {
+  let cursor = startCursor;
+  for (let p = 1; p < 5; p++) {
+    try {
+      const url = `https://api.twitch.tv/helix/streams?language=de&first=100&after=${cursor}`;
+      const r = await fetch(url, { headers: { 'Client-Id': TWITCH_CLIENT_ID, 'Authorization': `Bearer ${G.token}` } });
+      if (!r.ok) break;
+      const d = await r.json();
+      const more = (d.data || []).filter(s => s.viewer_count > 0).map(s => ({
+        channel: s.user_name, login: s.user_login,
+        game: s.game_name || 'Unbekannt', viewers: s.viewer_count,
+      }));
+      // Zum bestehenden Pool hinzufügen ohne bereits gespielte zu stören
+      G.pool.push(...more);
+      cursor = d.pagination?.cursor;
+      if (!cursor) break;
+    } catch(e) { break; }
+  }
 }
 
 /* ══════════════════════════════════════════════
@@ -1024,3 +1052,4 @@ function playSound(pts){
 }
 </script>
 </body>
+</html>
