@@ -8,9 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ════════════════════════════════════
-       DESIGN TOKENS
-    ════════════════════════════════════ */
     :root {
       --bg-deep:      #0d0d0f;
       --bg-card:      #18181b;
@@ -44,76 +41,49 @@
         linear-gradient(90deg, rgba(145,71,255,0.025) 1px, transparent 1px);
       background-size: 40px 40px; pointer-events: none; z-index: 0;
     }
-    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 900px; padding: 0 16px 80px; }
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 1200px; padding: 0 16px 80px; }
 
-    /* ── Header ── */
+    /* HEADER */
     header { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 28px 0 20px; }
     .logo-icon { width: 38px; height: 38px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 24px var(--accent-glow); flex-shrink: 0; }
     .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
     h1 { font-family: 'Bebas Neue', cursive; font-size: clamp(1.8rem,5vw,3rem); letter-spacing: 0.04em; line-height: 1; }
     h1 span { color: var(--accent); }
 
-    /* ── Screens ── */
     .screen { display: none; flex-direction: column; }
     .screen.active { display: flex; }
     .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
 
-    /* ════════════════════════════════════
-       LOGIN SCREEN
-    ════════════════════════════════════ */
+    /* ══ LOGIN ══ */
     #screen-login { align-items: center; gap: 24px; padding: 16px 0 40px; }
     .login-card { padding: 40px 44px; max-width: 420px; width: 100%; text-align: center; }
     .login-card h2 { font-family: 'Bebas Neue', cursive; font-size: 1.8rem; letter-spacing: 0.05em; margin-bottom: 10px; }
     .login-card > p { color: var(--text-muted); font-size: 0.8rem; line-height: 1.7; margin-bottom: 32px; }
-
-    .btn-twitch-login {
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      width: 100%; padding: 15px 24px;
-      background: var(--accent); color: #fff; border: none;
-      border-radius: var(--radius-sm);
-      font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 0.08em;
-      cursor: pointer; transition: all 0.18s;
-      box-shadow: 0 4px 24px rgba(145,71,255,0.5);
-    }
-    .btn-twitch-login:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 6px 32px rgba(145,71,255,0.6); }
-    .btn-twitch-login:active:not(:disabled) { transform: translateY(0); }
+    .btn-twitch-login { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 15px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.18s; box-shadow: 0 4px 24px rgba(145,71,255,0.5); }
+    .btn-twitch-login:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); }
     .btn-twitch-login:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-twitch-login svg { width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
-
     .login-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: var(--text-dim); font-size: 0.72rem; }
     .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background: var(--border); }
-
-    .login-info {
-      display: flex; align-items: flex-start; gap: 10px;
-      margin-top: 24px; padding: 12px 14px; text-align: left;
-      background: var(--bg-hover); border-radius: var(--radius-sm);
-      font-size: 0.72rem; color: var(--text-dim); line-height: 1.55;
-    }
+    .login-info { display: flex; align-items: flex-start; gap: 10px; margin-top: 24px; padding: 12px 14px; text-align: left; background: var(--bg-hover); border-radius: var(--radius-sm); font-size: 0.72rem; color: var(--text-dim); line-height: 1.55; }
     .login-info svg { width: 15px; height: 15px; fill: var(--text-dim); flex-shrink: 0; margin-top: 1px; }
 
-    /* ════════════════════════════════════
-       MENU SCREEN
-    ════════════════════════════════════ */
+    /* ══ MENU ══ */
     #screen-menu { align-items: center; gap: 28px; padding: 16px 0 40px; }
     .menu-card { padding: 36px 44px; text-align: center; max-width: 460px; width: 100%; }
     .menu-card h2 { font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.05em; margin-bottom: 8px; }
     .menu-card > p { color: var(--text-muted); font-size: 0.8rem; line-height: 1.6; margin-bottom: 20px; }
-
-    /* User Badge */
     .user-badge { display: flex; align-items: center; gap: 12px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 20px; text-align: left; }
     .user-badge img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
     .user-badge-name { font-size: 0.85rem; color: var(--text-primary); font-weight: 500; }
     .user-badge-sub { font-size: 0.67rem; color: var(--text-dim); margin-top: 2px; }
-
     .round-label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); margin-bottom: 10px; }
     .round-options { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
     .round-btn { width: 64px; height: 50px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); font-family: 'Bebas Neue', cursive; font-size: 1.4rem; cursor: pointer; transition: all 0.18s; }
     .round-btn:hover { border-color: var(--accent-light); color: var(--accent-light); background: var(--accent-dim); }
     .round-btn.active { border-color: var(--accent); color: #fff; background: var(--accent); box-shadow: 0 0 16px var(--accent-glow); }
 
-    /* ════════════════════════════════════
-       SHARED BUTTONS
-    ════════════════════════════════════ */
+    /* BUTTONS */
     .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); padding: 13px 30px; font-family: 'Bebas Neue', cursive; font-size: 1.05rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.18s; box-shadow: 0 4px 18px var(--accent-glow); }
     .btn-primary:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); }
     .btn-primary:active:not(:disabled) { transform: translateY(0); }
@@ -126,10 +96,9 @@
     .btn-menu:hover { border-color: var(--text-muted); color: var(--text-muted); }
     .btn-menu svg { width: 13px; height: 13px; fill: currentColor; }
 
-    /* ════════════════════════════════════
-       GAME SCREEN
-    ════════════════════════════════════ */
-    #screen-game { gap: 18px; padding: 8px 0; }
+    /* ══ GAME SCREEN ══ */
+    #screen-game { gap: 16px; padding: 8px 0; }
+
     .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .round-indicator { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
     .round-indicator strong { color: var(--accent-light); font-size: 1rem; }
@@ -138,52 +107,33 @@
     .score-val { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; color: var(--accent-light); transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .25s; }
     .score-val.bump { transform: scale(1.4); color: #fff; }
 
-    /* Stream Wrap */
+    /* ── 2-Spalten-Layout: Stream + Leaderboard ── */
+    .game-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 16px;
+      align-items: start;
+    }
+    .game-left { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+    /* Stream */
     .stream-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); box-shadow: var(--shadow); }
-
-    /* ── Blur-Balken: kein schwarzer Balken, echter Glasblur ── */
-    .viewer-blur-bar {
-      position: absolute; top: 0; left: 0;
-      width: 54%; height: 20%; z-index: 6;
-      backdrop-filter: blur(28px) saturate(0.15) brightness(0.85);
-      -webkit-backdrop-filter: blur(28px) saturate(0.15) brightness(0.85);
-      background: rgba(80, 30, 160, 0.15);
-      pointer-events: none; transition: opacity 0.3s;
-    }
-    /* Im Vollbild via fixed positionieren damit der Balken sichtbar bleibt */
-    :fullscreen .viewer-blur-bar,
-    :-webkit-full-screen .viewer-blur-bar {
-      position: fixed; top: 0; left: 0;
-      width: 54vw; height: 12vh;
-      z-index: 2147483647;
-    }
+    .viewer-blur-bar { position: absolute; top: 0; left: 0; width: 54%; height: 20%; z-index: 6; backdrop-filter: blur(28px) saturate(0.15) brightness(0.85); -webkit-backdrop-filter: blur(28px) saturate(0.15) brightness(0.85); background: rgba(80,30,160,0.15); pointer-events: none; transition: opacity 0.3s; }
+    :fullscreen .viewer-blur-bar, :-webkit-full-screen .viewer-blur-bar { position: fixed; top: 0; left: 0; width: 54vw; height: 12vh; z-index: 2147483647; }
     .viewer-blur-bar.hidden { opacity: 0; pointer-events: none; }
-
     #twitch-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-
-    /* Lade-Overlay */
     .stream-loading { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; background: #0d0d0f; transition: opacity 0.5s; }
     .stream-loading.hidden { opacity: 0; pointer-events: none; }
     .spin-ring { width: 44px; height: 44px; border: 3px solid rgba(145,71,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .load-txt { font-size: 0.73rem; color: var(--text-dim); letter-spacing: 0.08em; }
-
-    /* Ergebnis-Overlay */
     .result-overlay { position: absolute; inset: 0; z-index: 10; background: rgba(0,0,0,0.82); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
     .result-overlay.visible { display: flex; }
     .overlay-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.18em; color: rgba(255,255,255,0.55); }
-    .overlay-viewers { font-family: 'Bebas Neue', cursive; font-size: clamp(3rem,11vw,6rem); color: var(--green); line-height: 1; text-shadow: 0 0 50px rgba(0,229,160,0.6); animation: zoomIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .overlay-viewers { font-family: 'Bebas Neue', cursive; font-size: clamp(3rem,8vw,5.5rem); color: var(--green); line-height: 1; text-shadow: 0 0 50px rgba(0,229,160,0.6); animation: zoomIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes zoomIn { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
     .overlay-sub { font-size: 0.7rem; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; margin-top: 4px; }
 
-    /* Fehler */
-    .error-box { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 36px 20px; text-align: center; }
-    .error-box.visible { display: flex; }
-    .err-icon { font-size: 2.4rem; }
-    .err-title { font-family: 'Bebas Neue', cursive; font-size: 1.4rem; color: var(--red); }
-    .err-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; max-width: 380px; }
-
-    /* Stream Meta */
     .stream-meta { display: flex; align-items: center; gap: 12px; padding: 0 4px; flex-wrap: wrap; }
     .live-badge { display: flex; align-items: center; gap: 6px; background: #e91916; color: #fff; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
     .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: blink 1.2s ease-in-out infinite; }
@@ -192,15 +142,14 @@
     .stream-game { margin-left: auto; font-size: 0.72rem; color: var(--text-muted); }
 
     /* Guess Panel */
-    .guess-panel { padding: 26px 30px; display: flex; flex-direction: column; gap: 18px; }
-    .guess-title { font-family: 'Bebas Neue', cursive; font-size: 1.15rem; letter-spacing: 0.06em; color: var(--text-muted); }
+    .guess-panel { padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; }
+    .guess-title { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 0.06em; color: var(--text-muted); }
     .input-row { display: flex; gap: 12px; align-items: stretch; }
     .guess-input { flex: 1; background: var(--bg-deep); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.05em; padding: 10px 18px; outline: none; text-align: center; transition: border-color 0.18s, box-shadow 0.18s; -moz-appearance: textfield; }
     .guess-input::-webkit-outer-spin-button, .guess-input::-webkit-inner-spin-button { -webkit-appearance: none; }
     .guess-input::placeholder { color: var(--text-dim); }
     .guess-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
     .guess-input:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .result-area { display: none; flex-direction: column; gap: 14px; }
     .result-area.visible { display: flex; }
     .reveal-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -208,22 +157,97 @@
     .reveal-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
     .reveal-val { font-family: 'Bebas Neue', cursive; font-size: 1.7rem; letter-spacing: 0.04em; }
     .reveal-val.actual { color: var(--green); }
-    .reveal-val.guess  { color: var(--text-muted); }
+    .reveal-val.guess { color: var(--text-muted); }
     .feedback-badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 999px; font-size: 0.76rem; font-weight: 500; letter-spacing: 0.06em; animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes popIn { from{opacity:0;transform:scale(0.65)} to{opacity:1;transform:scale(1)} }
-    .feedback-badge.perfect { background:rgba(0,229,160,0.15); color:var(--green);        border:1px solid rgba(0,229,160,0.3); }
-    .feedback-badge.great   { background:rgba(145,71,255,0.15); color:var(--accent-light); border:1px solid rgba(145,71,255,0.3); }
-    .feedback-badge.good    { background:rgba(255,204,0,0.12);  color:var(--yellow);       border:1px solid rgba(255,204,0,0.3); }
-    .feedback-badge.miss    { background:rgba(255,77,109,0.12); color:var(--red);          border:1px solid rgba(255,77,109,0.3); }
+    .feedback-badge.perfect { background:rgba(0,229,160,0.15); color:var(--green); border:1px solid rgba(0,229,160,0.3); }
+    .feedback-badge.great { background:rgba(145,71,255,0.15); color:var(--accent-light); border:1px solid rgba(145,71,255,0.3); }
+    .feedback-badge.good { background:rgba(255,204,0,0.12); color:var(--yellow); border:1px solid rgba(255,204,0,0.3); }
+    .feedback-badge.miss { background:rgba(255,77,109,0.12); color:var(--red); border:1px solid rgba(255,77,109,0.3); }
     .pts-gained { font-family: 'Bebas Neue', cursive; font-size: 1.3rem; color: var(--accent-light); animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
     .acc-bar-wrap { height: 5px; background: var(--bg-deep); border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
     .acc-bar { height: 100%; border-radius: 99px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
     .action-row { display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
 
-    /* ════════════════════════════════════
-       RESULTS
-    ════════════════════════════════════ */
+    /* Fehler */
+    .error-box { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 36px 20px; text-align: center; }
+    .error-box.visible { display: flex; }
+    .err-icon { font-size: 2.4rem; }
+    .err-title { font-family: 'Bebas Neue', cursive; font-size: 1.4rem; color: var(--red); }
+    .err-msg { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; max-width: 380px; }
+
+    /* ══ LEADERBOARD (rechte Spalte) ══ */
+    .leaderboard {
+      display: flex; flex-direction: column; gap: 12px;
+      position: sticky; top: 16px;
+    }
+
+    .lb-card { padding: 16px; }
+
+    .lb-title {
+      font-family: 'Bebas Neue', cursive; font-size: 1rem; letter-spacing: 0.08em;
+      color: var(--text-muted); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .lb-title svg { width: 14px; height: 14px; fill: var(--accent-light); }
+
+    /* Einzelne Leaderboard-Einträge */
+    .lb-row {
+      display: grid; grid-template-columns: 22px 1fr auto;
+      gap: 8px; align-items: center;
+      padding: 7px 8px; border-radius: var(--radius-sm);
+      transition: background 0.15s;
+      animation: fadeInRow 0.3s ease;
+    }
+    @keyframes fadeInRow { from{opacity:0;transform:translateX(8px)} to{opacity:1;transform:translateX(0)} }
+    .lb-row:hover { background: var(--bg-hover); }
+    .lb-row.streamer { background: var(--accent-dim); border: 1px solid rgba(145,71,255,0.2); }
+    .lb-row.streamer .lb-pts { color: var(--accent-light); }
+
+    .lb-rank { font-family: 'Bebas Neue', cursive; font-size: 0.9rem; color: var(--text-dim); text-align: center; }
+    .lb-rank.gold   { color: #ffd700; }
+    .lb-rank.silver { color: #c0c0c0; }
+    .lb-rank.bronze { color: #cd7f32; }
+
+    .lb-name { font-size: 0.75rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-name .you { font-size: 0.6rem; color: var(--accent-light); margin-left: 4px; }
+
+    .lb-pts { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: var(--green); }
+    .lb-pts.bump { animation: ptsBump 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes ptsBump { 0%{transform:scale(1)} 50%{transform:scale(1.4);color:#fff} 100%{transform:scale(1)} }
+
+    .lb-empty { font-size: 0.72rem; color: var(--text-dim); text-align: center; padding: 16px 0; line-height: 1.6; }
+
+    /* Chat-Status-Badge */
+    .chat-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.65rem; color: var(--text-dim); padding: 0 2px;
+    }
+    .chat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
+    .chat-dot.connected { background: var(--green); animation: blink 1.5s ease-in-out infinite; }
+    .chat-dot.error { background: var(--red); }
+
+    /* Runden-Guess-Übersicht (kleine Chips) */
+    .round-guesses {
+      display: flex; flex-direction: column; gap: 4px; max-height: 200px; overflow-y: auto;
+    }
+    .round-guesses::-webkit-scrollbar { width: 3px; }
+    .round-guesses::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    .rg-row {
+      display: grid; grid-template-columns: 1fr auto auto;
+      gap: 6px; align-items: center;
+      font-size: 0.7rem; padding: 4px 8px;
+      border-radius: 4px; background: var(--bg-hover);
+      animation: fadeInRow 0.25s ease;
+    }
+    .rg-name { color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rg-guess { font-family: 'Bebas Neue', cursive; font-size: 0.85rem; color: var(--text-primary); }
+    .rg-pts { font-family: 'Bebas Neue', cursive; font-size: 0.85rem; color: var(--accent-light); }
+    .rg-pts.pending { color: var(--text-dim); }
+
+    /* ══ RESULTS ══ */
     #screen-results { gap: 22px; padding: 8px 0 40px; }
     .results-hdr { text-align: center; padding: 28px 0 12px; }
     .results-hdr h2 { font-family: 'Bebas Neue', cursive; font-size: clamp(2rem,8vw,3.2rem); letter-spacing: 0.06em; line-height: 1; margin-bottom: 8px; }
@@ -231,22 +255,27 @@
     .big-score-wrap .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
     .big-score { font-family: 'Bebas Neue', cursive; font-size: clamp(2.8rem,10vw,4.5rem); color: var(--accent-light); line-height: 1; text-shadow: 0 0 40px var(--accent-glow); }
     .rank-txt { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Ergebnis-Tabellen nebeneinander */
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .tbl { border-radius: var(--radius); overflow: hidden; }
-    .tbl-hdr, .tbl-row { display: grid; grid-template-columns: 44px 1fr 110px 110px 90px; }
-    .tbl-hdr { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
-    .tbl-row { padding: 14px 18px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.15s; }
-    .tbl-row:last-child { border-bottom: none; }
-    .tbl-row:hover { background: var(--bg-hover); }
-    .tbl-row .rn { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; color: var(--text-dim); }
-    .tbl-row .sc { font-size: 0.79rem; color: var(--text-primary); }
-    .tbl-row .nc { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: var(--text-muted); }
-    .tbl-row .ac { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: var(--green); }
-    .tbl-row .pc { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; color: var(--accent-light); }
+    .tbl-title { font-family: 'Bebas Neue', cursive; font-size: 1rem; letter-spacing: 0.06em; padding: 12px 18px; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+    .tbl-hdr { display: grid; padding: 8px 18px; border-bottom: 1px solid var(--border); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-dim); }
+    .tbl-hdr.streamer-hdr { grid-template-columns: 44px 1fr 100px 100px 80px; }
+    .tbl-hdr.lb-hdr { grid-template-columns: 36px 1fr 80px; }
+    .tbl-row-s { display: grid; grid-template-columns: 44px 1fr 100px 100px 80px; padding: 12px 18px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.15s; font-size: 0.78rem; }
+    .tbl-row-l { display: grid; grid-template-columns: 36px 1fr 80px; padding: 12px 18px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.15s; }
+    .tbl-row-s:last-child, .tbl-row-l:last-child { border-bottom: none; }
+    .tbl-row-s:hover, .tbl-row-l:hover { background: var(--bg-hover); }
+    .tbl-row-s .rn, .tbl-row-l .rn { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; color: var(--text-dim); }
+    .tbl-row-s .sc { font-size: 0.75rem; color: var(--text-primary); }
+    .tbl-row-l .sc { font-size: 0.78rem; color: var(--text-primary); }
+    .nc { font-family: 'Bebas Neue', cursive; font-size: 0.95rem; color: var(--text-muted); }
+    .ac { font-family: 'Bebas Neue', cursive; font-size: 0.95rem; color: var(--green); }
+    .pc { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: var(--accent-light); }
     .results-acts { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-    /* ════════════════════════════════════
-       MODAL
-    ════════════════════════════════════ */
+    /* MODAL */
     .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
     .modal-backdrop.visible { display: flex; }
     .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 40px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.8); animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1); }
@@ -256,58 +285,23 @@
     .modal p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
     .modal-actions { display: flex; gap: 12px; justify-content: center; }
 
-    /* ════════════════════════════════════
-       COUNTDOWN
-    ════════════════════════════════════ */
-    .countdown-bar {
-      display: flex; align-items: center; gap: 14px;
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 10px 16px;
-      transition: border-color 0.3s;
-    }
-    .countdown-bar.warning  { border-color: var(--yellow); }
-    .countdown-bar.danger   { border-color: var(--red); animation: pulse-border 0.5s ease-in-out infinite; }
-    @keyframes pulse-border { 0%,100%{border-color:var(--red)} 50%{border-color:rgba(255,77,109,0.3)} }
-
-    .countdown-num {
-      font-family: 'Bebas Neue', cursive; font-size: 1.6rem; line-height: 1;
-      min-width: 32px; text-align: center;
-      color: var(--green); transition: color 0.3s;
-    }
-    .countdown-num.warning { color: var(--yellow); }
-    .countdown-num.danger  { color: var(--red); }
-
-    .countdown-track {
-      flex: 1; height: 6px; background: var(--bg-hover);
-      border-radius: 99px; overflow: hidden;
-    }
-    .countdown-fill {
-      height: 100%; border-radius: 99px;
-      background: var(--green);
-      transition: width 1s linear, background 0.3s;
-    }
-    .countdown-fill.warning { background: var(--yellow); }
-    .countdown-fill.danger  { background: var(--red); }
-
-    .countdown-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); flex-shrink: 0; }
-
-    /* ════════════════════════════════════
-       FOOTER & TOAST
-    ════════════════════════════════════ */
     footer { position: fixed; bottom: 14px; right: 18px; font-size: 0.62rem; color: var(--text-dim); z-index: 10; }
     #toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 22px; font-size: 0.8rem; color: var(--text-primary); opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 100; white-space: nowrap; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    @media (max-width: 800px) {
+      .game-layout { grid-template-columns: 1fr; }
+      .leaderboard { position: static; }
+      .results-grid { grid-template-columns: 1fr; }
+    }
     @media (max-width: 580px) {
       .guess-panel, .login-card, .menu-card { padding: 20px 16px; }
-      .tbl-hdr, .tbl-row { grid-template-columns: 34px 1fr 80px 80px 68px; font-size: 0.69rem; padding: 10px; }
     }
   </style>
 </head>
 <body>
 <div class="wrapper">
 
-  <!-- HEADER -->
   <header>
     <div class="logo-icon">
       <svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
@@ -315,22 +309,17 @@
     <h1>Viewcount <span>Guessr</span></h1>
   </header>
 
-  <!-- ══ LOGIN ══ -->
+  <!-- LOGIN -->
   <div id="screen-login" class="screen active">
     <div class="card login-card">
       <h2>Willkommen!</h2>
       <p>Melde dich mit deinem Twitch-Account an und schätze die Zuschauerzahlen live streamender deutscher Kanäle.</p>
-
       <button class="btn-twitch-login" id="btn-twitch-login">
         <svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
         Mit Twitch anmelden
       </button>
-
       <div class="login-divider"><span>oder</span></div>
-      <div style="text-align:center;">
-        <button class="btn-ghost" id="btn-demo">Demo spielen (ohne Anmeldung)</button>
-      </div>
-
+      <div style="text-align:center;"><button class="btn-ghost" id="btn-demo">Demo spielen (ohne Anmeldung)</button></div>
       <div class="login-info">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
         Das Spiel fragt nur nach deiner Identität. Es werden keinerlei Aktionen in deinem Namen durchgeführt.
@@ -338,11 +327,11 @@
     </div>
   </div>
 
-  <!-- ══ MENU ══ -->
+  <!-- MENU -->
   <div id="screen-menu" class="screen">
     <div class="card menu-card">
       <h2>Wie viele Runden?</h2>
-      <p>Zufällige deutsche Twitch-Livestreams – schätze die Zuschauer!</p>
+      <p>Zufällige deutsche Twitch-Livestreams – Zuschauer können mitspielen indem sie ihre Zahl in den Chat schreiben!</p>
       <div class="user-badge" id="user-badge" style="display:none;">
         <img id="user-avatar" src="" alt="Avatar" />
         <div>
@@ -357,13 +346,11 @@
         <button class="round-btn" data-r="15">15</button>
       </div>
       <button class="btn-primary" id="btn-start">▶ &nbsp;Spiel starten</button>
-      <div style="margin-top:14px;">
-        <button class="btn-ghost" id="btn-logout">Abmelden</button>
-      </div>
+      <div style="margin-top:14px;"><button class="btn-ghost" id="btn-logout">Abmelden</button></div>
     </div>
   </div>
 
-  <!-- ══ GAME ══ -->
+  <!-- GAME -->
   <div id="screen-game" class="screen">
 
     <div class="top-bar">
@@ -377,7 +364,7 @@
       </div>
     </div>
 
-    <!-- Hauptmenü-Bestätigungs-Modal -->
+    <!-- Modal -->
     <div class="modal-backdrop" id="modal-menu">
       <div class="modal">
         <div class="modal-icon">🏠</div>
@@ -397,71 +384,111 @@
       <button class="btn-secondary" id="btn-retry">Erneut versuchen</button>
     </div>
 
-    <!-- Countdown-Balken -->
-    <div class="countdown-bar" id="countdown-bar">
-      <span class="countdown-label">Zeit</span>
-      <div class="countdown-track">
-        <div class="countdown-fill" id="countdown-fill" style="width:100%;"></div>
-      </div>
-      <span class="countdown-num" id="countdown-num">20</span>
-    </div>
+    <!-- 2-Spalten-Layout -->
+    <div class="game-layout">
 
-    <div class="stream-wrap">
-      <div class="stream-loading" id="stream-loading">
-        <div class="spin-ring"></div>
-        <span class="load-txt">Lade Stream…</span>
-      </div>
-      <iframe id="twitch-iframe" allowfullscreen allow="autoplay; fullscreen" src="about:blank"></iframe>
-      <!-- Glasblur über Twitch-Banner mit Zuschauerzahl -->
-      <div class="viewer-blur-bar" id="viewer-blur-bar"></div>
-      <div class="result-overlay" id="result-overlay">
-        <span class="overlay-label">Echte Zuschauer</span>
-        <span class="overlay-viewers" id="overlay-viewers">—</span>
-        <span class="overlay-sub">Stream läuft weiter im Hintergrund</span>
-      </div>
-    </div>
-
-    <div class="stream-meta">
-      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-      <span class="stream-name" id="s-name">—</span>
-      <span class="stream-game" id="s-game">—</span>
-    </div>
-
-    <div class="card guess-panel">
-      <div class="guess-title">Wie viele Zuschauer hat dieser Stream?</div>
-      <div class="input-row">
-        <input type="number" id="g-inp" class="guess-input" placeholder="z.B. 1500" min="0" />
-        <button class="btn-primary" id="btn-sub">Schätzen</button>
-      </div>
-      <div class="result-area" id="res-area">
-        <div class="acc-bar-wrap"><div class="acc-bar" id="acc-bar" style="width:0%;background:var(--green);"></div></div>
-        <div class="reveal-row">
-          <div style="display:flex;gap:28px;flex-wrap:wrap;">
-            <div class="reveal-block"><div class="reveal-label">Deine Schätzung</div><div class="reveal-val guess" id="rv-guess">—</div></div>
-            <div class="reveal-block"><div class="reveal-label">Echte Zuschauer</div><div class="reveal-val actual" id="rv-actual">—</div></div>
+      <!-- LINKE SPALTE: Stream + Schätz-Panel -->
+      <div class="game-left">
+        <div class="stream-wrap">
+          <div class="stream-loading" id="stream-loading">
+            <div class="spin-ring"></div>
+            <span class="load-txt">Lade Stream…</span>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-            <div class="feedback-badge" id="fb-badge">—</div>
-            <div class="pts-gained" id="pts-gained">+0 Punkte</div>
+          <iframe id="twitch-iframe" allowfullscreen allow="autoplay; fullscreen" src="about:blank"></iframe>
+          <div class="viewer-blur-bar" id="viewer-blur-bar"></div>
+          <div class="result-overlay" id="result-overlay">
+            <span class="overlay-label">Echte Zuschauer</span>
+            <span class="overlay-viewers" id="overlay-viewers">—</span>
+            <span class="overlay-sub">Stream läuft weiter im Hintergrund</span>
           </div>
         </div>
-        <div class="action-row">
-          <button class="btn-secondary" id="btn-next">Nächster Stream →</button>
+
+        <div class="stream-meta">
+          <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+          <span class="stream-name" id="s-name">—</span>
+          <span class="stream-game" id="s-game">—</span>
         </div>
+
+        <div class="card guess-panel">
+          <div class="guess-title">Wie viele Zuschauer hat dieser Stream?</div>
+          <div class="input-row">
+            <input type="number" id="g-inp" class="guess-input" placeholder="z.B. 1500" min="0" />
+            <button class="btn-primary" id="btn-sub">Schätzen</button>
+          </div>
+          <div class="result-area" id="res-area">
+            <div class="acc-bar-wrap"><div class="acc-bar" id="acc-bar" style="width:0%;background:var(--green);"></div></div>
+            <div class="reveal-row">
+              <div style="display:flex;gap:28px;flex-wrap:wrap;">
+                <div class="reveal-block"><div class="reveal-label">Deine Schätzung</div><div class="reveal-val guess" id="rv-guess">—</div></div>
+                <div class="reveal-block"><div class="reveal-label">Echte Zuschauer</div><div class="reveal-val actual" id="rv-actual">—</div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="feedback-badge" id="fb-badge">—</div>
+                <div class="pts-gained" id="pts-gained">+0 Punkte</div>
+              </div>
+            </div>
+            <div class="action-row">
+              <button class="btn-secondary" id="btn-next">Nächster Stream →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECHTE SPALTE: Leaderboard -->
+      <div class="leaderboard">
+
+        <!-- Runden-Guesses (wer hat schon getippt?) -->
+        <div class="card lb-card">
+          <div class="lb-title">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            Diese Runde
+          </div>
+          <div class="chat-status" id="chat-status">
+            <div class="chat-dot" id="chat-dot"></div>
+            <span id="chat-status-txt">Nicht verbunden</span>
+          </div>
+          <div style="margin-top:10px;" id="round-guesses-wrap">
+            <div class="round-guesses" id="round-guesses">
+              <div class="lb-empty">Warte auf Schätzungen…<br><span style="font-size:0.65rem;">Zuschauer tippen ihre Zahl in den Chat</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gesamt-Leaderboard -->
+        <div class="card lb-card">
+          <div class="lb-title">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+            Gesamtpunkte
+          </div>
+          <div id="leaderboard-total">
+            <div class="lb-empty">Noch keine Punkte</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- ══ RESULTS ══ -->
+  <!-- RESULTS -->
   <div id="screen-results" class="screen">
     <div class="results-hdr">
       <h2>Spielende!</h2>
-      <div class="big-score-wrap"><span class="lbl">Gesamtpunkte</span><span class="big-score" id="final-sc">0</span></div>
+      <div class="big-score-wrap"><span class="lbl">Deine Gesamtpunkte</span><span class="big-score" id="final-sc">0</span></div>
       <div class="rank-txt" id="rank-txt">—</div>
     </div>
-    <div class="card tbl">
-      <div class="tbl-hdr"><span>#</span><span>Stream</span><span>Schätzung</span><span>Wirklich</span><span>Punkte</span></div>
-      <div id="tbl-rows"></div>
+    <div class="results-grid">
+      <!-- Streamer-Tabelle -->
+      <div class="card tbl">
+        <div class="tbl-title">📺 Deine Runden</div>
+        <div class="tbl-hdr streamer-hdr"><span>#</span><span>Stream</span><span>Schätzung</span><span>Wirklich</span><span>Punkte</span></div>
+        <div id="tbl-rows"></div>
+      </div>
+      <!-- Zuschauer-Tabelle -->
+      <div class="card tbl">
+        <div class="tbl-title">🏆 Chat-Highscores</div>
+        <div class="tbl-hdr lb-hdr"><span>#</span><span>Zuschauer</span><span>Punkte</span></div>
+        <div id="tbl-chat-rows"></div>
+      </div>
     </div>
     <div class="results-acts"><button class="btn-primary" id="btn-again">↩ Nochmal spielen</button></div>
   </div>
@@ -473,11 +500,6 @@
 <script>
 /* ══════════════════════════════════════════════
    KONFIGURATION
-   ▸ Trage hier deine Twitch Client-ID ein.
-   ▸ In der Twitch Developer Console muss als
-     OAuth Redirect URL deine GitHub-Pages-URL
-     eingetragen sein, z.B.:
-     https://DEIN-NAME.github.io
 ══════════════════════════════════════════════ */
 const TWITCH_CLIENT_ID = 'v3hih0hj6dlk4nvq2h6c1a3k61ibro';
 
@@ -505,166 +527,318 @@ const DEMO = [
 /* ══════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════ */
-const G = { demo:false, clientId:'', token:'', pool:[], used:[], rounds:10, round:0, score:0, history:[], current:null, submitted:false };
+const G = {
+  demo:false, clientId:'', token:'', userName:'',
+  pool:[], used:[], rounds:10, round:0, score:0,
+  history:[], current:null, submitted:false,
+};
+
+/* Multiplayer-State */
+const MP = {
+  // Gesamt-Punkte aller Chat-User: { login: { display, total } }
+  totals: {},
+  // Schätzungen der aktuellen Runde: { login: { display, guess, pts } }
+  roundGuesses: {},
+  // Ob die echte Zuschauerzahl schon aufgedeckt wurde
+  revealed: false,
+};
+
 const $  = id => document.getElementById(id);
 const fN = n  => n.toLocaleString('de-DE');
-
-function shuffle(a) {
-  const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b;
-}
-function calcPts(g,a) { if(!a)return 0; return Math.max(0,Math.round(1000*Math.exp(-3.5*Math.abs(g-a)/a))); }
-function getFeedback(p) {
-  if(p>=900)return{txt:'🔥 Perfekt!',cls:'perfect'};
-  if(p>=600)return{txt:'⚡ Sehr nah!',cls:'great'};
-  if(p>=250)return{txt:'👍 Ganz gut!',cls:'good'};
-  return{txt:'💀 Weit daneben!',cls:'miss'};
-}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function calcPts(g,a){if(!a)return 0;return Math.max(0,Math.round(1000*Math.exp(-3.5*Math.abs(g-a)/a)));}
+function getFeedback(p){if(p>=900)return{txt:'🔥 Perfekt!',cls:'perfect'};if(p>=600)return{txt:'⚡ Sehr nah!',cls:'great'};if(p>=250)return{txt:'👍 Ganz gut!',cls:'good'};return{txt:'💀 Weit daneben!',cls:'miss'};}
 function toast(msg,ms=2800){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),ms);}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
 
 /* ══════════════════════════════════════════════
-   TWITCH OAuth – Implicit Grant Flow
-   ─────────────────────────────────────────────
-   1. User klickt Login → Browser öffnet Twitch
-   2. User loggt sich ein, erteilt Erlaubnis
-   3. Twitch leitet zurück mit #access_token=...
-   4. Wir lesen Token aus Hash → API nutzen
-   Kein Client-Secret nötig!
+   TWITCH IRC CHAT – WebSocket
+   Verbindet mit dem Twitch IRC-Server über WSS.
+   Liest Nachrichten des aktuellen Kanals.
+   Erste Zahl die ein User schreibt = sein Guess.
+   Kein Bot-Login nötig – wir verbinden als
+   anonymer "justinfan"-User (read-only).
 ══════════════════════════════════════════════ */
-function getRedirectUri() {
-  // Exakte GitHub Pages URL – muss 1:1 mit der Twitch App OAuth Redirect URL übereinstimmen
-  return 'https://kieskauer.github.io/viewcount-guessr/';
+let chatWs     = null;
+let chatChannel = '';
+
+function connectChat(channel) {
+  disconnectChat();
+  chatChannel = channel.toLowerCase();
+  MP.roundGuesses = {};
+  MP.revealed = false;
+
+  setChatStatus('connecting');
+
+  // Anonym verbinden (justinfan = Twitch-Anonymous-IRC)
+  chatWs = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+  chatWs.onopen = () => {
+    chatWs.send('CAP REQ :twitch.tv/tags');
+    chatWs.send('NICK justinfan' + Math.floor(Math.random() * 999999));
+    chatWs.send(`JOIN #${chatChannel}`);
+  };
+
+  chatWs.onmessage = (e) => {
+    const lines = e.data.split('\r\n');
+    lines.forEach(line => {
+      if (!line) return;
+
+      // PING/PONG keepalive
+      if (line.startsWith('PING')) {
+        chatWs.send('PONG :tmi.twitch.tv');
+        return;
+      }
+
+      // Verbunden wenn JOIN bestätigt
+      if (line.includes(`JOIN #${chatChannel}`)) {
+        setChatStatus('connected');
+        return;
+      }
+
+      // PRIVMSG = Chat-Nachricht
+      if (line.includes('PRIVMSG')) {
+        parseChatMessage(line);
+      }
+    });
+  };
+
+  chatWs.onerror = () => setChatStatus('error');
+  chatWs.onclose = () => {
+    if (chatChannel) setChatStatus('disconnected');
+  };
 }
 
-function startTwitchLogin() {
-  const p = new URLSearchParams({
-    client_id:     TWITCH_CLIENT_ID,
-    redirect_uri:  getRedirectUri(),
-    response_type: 'token',
-    scope:         'user:read:email',
-  });
-  window.location.href = `https://id.twitch.tv/oauth2/authorize?${p}`;
+function disconnectChat() {
+  if (chatWs) {
+    chatChannel = '';
+    chatWs.close();
+    chatWs = null;
+  }
+  setChatStatus('disconnected');
 }
 
-function extractTokenFromHash() {
-  const params = new URLSearchParams(window.location.hash.substring(1));
-  const token  = params.get('access_token');
-  if(token) history.replaceState(null, '', window.location.pathname);
-  return token || null;
+function setChatStatus(status) {
+  const dot = $('chat-dot');
+  const txt = $('chat-status-txt');
+  dot.className = 'chat-dot';
+  if (status === 'connected')    { dot.classList.add('connected'); txt.textContent = `#${chatChannel} verbunden`; }
+  else if (status === 'connecting') { txt.textContent = 'Verbinde mit Chat…'; }
+  else if (status === 'error')   { dot.classList.add('error'); txt.textContent = 'Chat-Fehler'; }
+  else                           { txt.textContent = 'Nicht verbunden'; }
 }
 
-function saveToken(t) { try{ localStorage.setItem('vg_token', t); }catch(e){} }
-function loadToken()  { try{ return localStorage.getItem('vg_token'); }catch(e){ return null; } }
-function clearToken() { try{ localStorage.removeItem('vg_token'); }catch(e){} }
+/* Chat-Nachricht parsen – Twitch IRC mit Tags */
+function parseChatMessage(line) {
+  // Tags extrahieren (display-name, user-login)
+  let displayName = '';
+  let userLogin   = '';
 
-async function validateToken(token) {
-  const r = await fetch('https://id.twitch.tv/oauth2/validate', { headers:{'Authorization':`OAuth ${token}`} });
-  return r.ok;
-}
-
-async function fetchUserProfile(token) {
-  const r = await fetch('https://api.twitch.tv/helix/users', {
-    headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${token}`}
-  });
-  if(!r.ok) return null;
-  const d = await r.json();
-  return d.data?.[0] || null;
-}
-
-/* ── Beim Seitenstart: Token aus Hash oder localStorage prüfen ── */
-(async function initAuth() {
-  let token = extractTokenFromHash();
-  if(token) {
-    saveToken(token);
-  } else {
-    token = loadToken();
-    if(token) {
-      const ok = await validateToken(token).catch(()=>false);
-      if(!ok) { clearToken(); token = null; }
-    }
+  const tagMatch = line.match(/^@([^ ]+)/);
+  if (tagMatch) {
+    const tags = {};
+    tagMatch[1].split(';').forEach(t => {
+      const [k,v] = t.split('=');
+      tags[k] = v;
+    });
+    displayName = tags['display-name'] || '';
+    userLogin   = tags['display-name']?.toLowerCase() || '';
   }
 
-  if(token) {
-    G.token = token; G.clientId = TWITCH_CLIENT_ID; G.demo = false;
-
-    // User-Profil für Badge laden
-    const user = await fetchUserProfile(token).catch(()=>null);
-    if(user) {
-      $('user-avatar').src = user.profile_image_url || '';
-      $('user-disp').textContent = user.display_name || user.login;
-      $('user-badge').style.display = 'flex';
-    }
-
-    // Streams vorab laden
-    G.pool = await loadGermanStreams().catch(()=>[]);
-    show('screen-menu');
+  // Login aus IRC-Prefix extrahieren (Fallback)
+  if (!userLogin) {
+    const loginMatch = line.match(/:([^!]+)!/);
+    if (loginMatch) userLogin = loginMatch[1].toLowerCase();
   }
-  // Kein Token → Login-Screen bleibt sichtbar
-})();
+  if (!displayName) displayName = userLogin;
 
-/* ── Login Button ── */
-$('btn-twitch-login').addEventListener('click', () => {
-  if(TWITCH_CLIENT_ID === 'DEINE_CLIENT_ID_HIER') {
-    toast('⚠️ Client-ID fehlt! Bitte in den Code eintragen.', 5000);
-    return;
+  // Nachrichtentext extrahieren
+  const msgMatch = line.match(/PRIVMSG #\S+ :(.+)$/);
+  if (!msgMatch) return;
+  const text = msgMatch[1].trim();
+
+  // Erste reine Zahl in der Nachricht suchen
+  // Nur wenn die gesamte Nachricht (oder erster Token) eine Zahl ist
+  const numMatch = text.match(/^(\d{1,7})\s*$/);
+  if (!numMatch) return;
+
+  const guess = parseInt(numMatch[1]);
+  if (isNaN(guess) || guess < 0) return;
+
+  // Jeder User darf pro Runde nur einmal tippen
+  if (MP.roundGuesses[userLogin]) return;
+
+  // Streamer selbst nicht als Chat-Zuschauer zählen
+  if (G.current && userLogin === G.current.login.toLowerCase()) return;
+
+  // Guess speichern
+  MP.roundGuesses[userLogin] = {
+    display: displayName,
+    guess:   guess,
+    pts:     null, // wird nach Reveal berechnet
+  };
+
+  // Wenn schon revealed → Punkte sofort berechnen
+  if (MP.revealed && G.current) {
+    const pts = calcPts(guess, G.current.viewers);
+    MP.roundGuesses[userLogin].pts = pts;
+    addToTotals(userLogin, displayName, pts);
   }
-  const btn = $('btn-twitch-login');
-  btn.disabled = true;
-  btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>&nbsp;Weiterleitung zu Twitch…';
-  startTwitchLogin();
-});
 
-/* ── Demo Button ── */
-$('btn-demo').addEventListener('click', () => {
-  G.demo=true; G.pool=shuffle([...DEMO]);
-  $('user-badge').style.display='none';
-  show('screen-menu');
-});
-
-/* ── Abmelden ── */
-$('btn-logout').addEventListener('click', () => {
-  clearToken();
-  G.token=''; G.clientId=''; G.demo=false;
-  $('user-badge').style.display='none';
-  show('screen-login');
-});
+  renderRoundGuesses();
+}
 
 /* ══════════════════════════════════════════════
-   TWITCH HELIX API – Deutsche Live-Streams
-   Lädt mehrere Seiten (bis zu 500 Streams) damit
-   auch kleine Streamer vorkommen, nicht nur die Top 100.
+   LEADERBOARD RENDERING
 ══════════════════════════════════════════════ */
-async function loadGermanStreams() {
-  const allStreams = [];
-  let cursor = null;
-  const maxPages = 5; // 5 × 100 = bis zu 500 Streams
 
-  for (let page = 0; page < maxPages; page++) {
-    const url = 'https://api.twitch.tv/helix/streams?language=de&first=100' +
-                (cursor ? `&after=${cursor}` : '');
+/* Runden-Guesses (rechte Spalte, aktuelle Runde) */
+function renderRoundGuesses() {
+  const container = $('round-guesses');
+  const entries = Object.values(MP.roundGuesses);
 
-    const r = await fetch(url, {
-      headers: { 'Client-Id': TWITCH_CLIENT_ID, 'Authorization': `Bearer ${G.token}` }
-    });
-    if (!r.ok) { const e = await r.json().catch(()=>{}); throw new Error(e?.message || `API ${r.status}`); }
-
-    const d = await r.json();
-    const streams = (d.data || []).filter(s => s.viewer_count > 0);
-    allStreams.push(...streams);
-
-    // Kein weiterer Cursor = keine weiteren Seiten
-    cursor = d.pagination?.cursor;
-    if (!cursor) break;
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="lb-empty">Warte auf Schätzungen…<br><span style="font-size:0.65rem;">Zuschauer tippen ihre Zahl in den Chat</span></div>';
+    return;
   }
 
-  return shuffle(
-    allStreams.map(s => ({
-      channel: s.user_name,
-      login:   s.user_login,
-      game:    s.game_name || 'Unbekannt',
-      viewers: s.viewer_count,
-    }))
-  );
+  // Sortieren: revealed → nach Punkten, sonst nach Eingabe-Reihenfolge
+  const sorted = [...entries].sort((a, b) => {
+    if (MP.revealed) return (b.pts || 0) - (a.pts || 0);
+    return 0;
+  });
+
+  container.innerHTML = sorted.map(e => `
+    <div class="rg-row">
+      <span class="rg-name">${escHtml(e.display)}</span>
+      <span class="rg-guess">${fN(e.guess)}</span>
+      <span class="rg-pts ${e.pts === null ? 'pending' : ''}">${e.pts === null ? '?' : '+' + fN(e.pts)}</span>
+    </div>
+  `).join('');
+}
+
+/* Gesamt-Leaderboard */
+function renderTotalLeaderboard() {
+  const container = $('leaderboard-total');
+  const entries = Object.values(MP.totals).sort((a,b) => b.total - a.total).slice(0, 15);
+
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="lb-empty">Noch keine Punkte</div>';
+    return;
+  }
+
+  container.innerHTML = entries.map((e, i) => {
+    const rankCls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const rankTxt = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
+    const isStreamer = e.login === G.userName?.toLowerCase();
+    return `
+      <div class="lb-row ${isStreamer ? 'streamer' : ''}">
+        <span class="lb-rank ${rankCls}">${rankTxt}</span>
+        <span class="lb-name">${escHtml(e.display)}${isStreamer ? '<span class="you">Du</span>' : ''}</span>
+        <span class="lb-pts">${fN(e.total)}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function addToTotals(login, display, pts) {
+  if (!MP.totals[login]) MP.totals[login] = { login, display, total: 0 };
+  MP.totals[login].total += pts;
+  MP.totals[login].display = display; // Display-Namen aktuell halten
+  renderTotalLeaderboard();
+}
+
+/* Streamer-Punkte ins Leaderboard */
+function addStreamerToLeaderboard(pts) {
+  const login = G.userName?.toLowerCase() || 'streamer';
+  const display = G.userName || 'Streamer';
+  addToTotals(login, display, pts);
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* Nach Reveal: alle wartenden Chat-Guesses auflösen */
+function revealChatGuesses() {
+  MP.revealed = true;
+  const actual = G.current.viewers;
+
+  Object.keys(MP.roundGuesses).forEach(login => {
+    const entry = MP.roundGuesses[login];
+    if (entry.pts === null) {
+      const pts = calcPts(entry.guess, actual);
+      entry.pts = pts;
+      addToTotals(login, entry.display, pts);
+    }
+  });
+
+  renderRoundGuesses();
+}
+
+/* ══════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════ */
+function getRedirectUri() { return 'https://kieskauer.github.io/viewcount-guessr/'; }
+function startTwitchLogin() {
+  const p = new URLSearchParams({ client_id:TWITCH_CLIENT_ID, redirect_uri:getRedirectUri(), response_type:'token', scope:'user:read:email' });
+  window.location.href = `https://id.twitch.tv/oauth2/authorize?${p}`;
+}
+function extractTokenFromHash() {
+  const params = new URLSearchParams(window.location.hash.substring(1));
+  const token = params.get('access_token');
+  if(token) history.replaceState(null,'',window.location.pathname);
+  return token||null;
+}
+function saveToken(t){try{localStorage.setItem('vg_token',t);}catch(e){}}
+function loadToken(){try{return localStorage.getItem('vg_token');}catch(e){return null;}}
+function clearToken(){try{localStorage.removeItem('vg_token');}catch(e){}}
+async function validateToken(t){const r=await fetch('https://id.twitch.tv/oauth2/validate',{headers:{'Authorization':`OAuth ${t}`}});return r.ok;}
+async function fetchUserProfile(t){const r=await fetch('https://api.twitch.tv/helix/users',{headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${t}`}});if(!r.ok)return null;const d=await r.json();return d.data?.[0]||null;}
+
+(async function initAuth() {
+  let token = extractTokenFromHash();
+  if(token){saveToken(token);}
+  else{
+    token=loadToken();
+    if(token){const ok=await validateToken(token).catch(()=>false);if(!ok){clearToken();token=null;}}
+  }
+  if(token){
+    G.token=token;G.clientId=TWITCH_CLIENT_ID;G.demo=false;
+    const user=await fetchUserProfile(token).catch(()=>null);
+    if(user){
+      G.userName=user.display_name||user.login;
+      $('user-avatar').src=user.profile_image_url||'';
+      $('user-disp').textContent=G.userName;
+      $('user-badge').style.display='flex';
+    }
+    G.pool=await loadGermanStreams().catch(()=>[]);
+    show('screen-menu');
+  }
+})();
+
+$('btn-twitch-login').addEventListener('click',()=>{
+  const btn=$('btn-twitch-login');btn.disabled=true;
+  btn.innerHTML='<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>&nbsp;Weiterleitung zu Twitch…';
+  startTwitchLogin();
+});
+$('btn-demo').addEventListener('click',()=>{G.demo=true;G.pool=shuffle([...DEMO]);$('user-badge').style.display='none';show('screen-menu');});
+$('btn-logout').addEventListener('click',()=>{clearToken();G.token='';G.clientId='';G.demo=false;$('user-badge').style.display='none';show('screen-login');});
+
+/* ══════════════════════════════════════════════
+   API – Deutsche Streams laden
+══════════════════════════════════════════════ */
+async function loadGermanStreams() {
+  const all=[];let cursor=null;
+  for(let p=0;p<5;p++){
+    const url='https://api.twitch.tv/helix/streams?language=de&first=100'+(cursor?`&after=${cursor}`:'');
+    const r=await fetch(url,{headers:{'Client-Id':TWITCH_CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+    if(!r.ok){const e=await r.json().catch(()=>{});throw new Error(e?.message||`API ${r.status}`);}
+    const d=await r.json();
+    all.push(...(d.data||[]).filter(s=>s.viewer_count>0));
+    cursor=d.pagination?.cursor;if(!cursor)break;
+  }
+  return shuffle(all.map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
 }
 
 /* ══════════════════════════════════════════════
@@ -675,146 +849,67 @@ document.querySelectorAll('.round-btn').forEach(b=>{
 });
 $('btn-start').addEventListener('click',()=>{
   G.round=0;G.score=0;G.used=[];G.history=[];
-  if(G.demo) G.pool=shuffle([...DEMO]);
+  MP.totals={};MP.roundGuesses={};MP.revealed=false;
+  if(G.demo)G.pool=shuffle([...DEMO]);
   $('rt').textContent=G.rounds;$('sv').textContent='0';
+  renderTotalLeaderboard();
   show('screen-game');nextRound();
 });
 
-/* ══════════════════════════════════════════════
-   HAUPTMENÜ-MODAL
-══════════════════════════════════════════════ */
+/* MODAL */
 $('btn-to-menu').addEventListener('click',()=>$('modal-menu').classList.add('visible'));
 $('modal-cancel').addEventListener('click',()=>$('modal-menu').classList.remove('visible'));
 $('modal-confirm').addEventListener('click',()=>{
   $('modal-menu').classList.remove('visible');
-  stopCountdown();
+  disconnectChat();
   $('twitch-iframe').src='about:blank';
   show('screen-menu');
 });
 $('modal-menu').addEventListener('click',e=>{if(e.target===$('modal-menu'))$('modal-menu').classList.remove('visible');});
 
 /* ══════════════════════════════════════════════
-   COUNTDOWN – 20 Sekunden pro Runde
-══════════════════════════════════════════════ */
-const COUNTDOWN_SEC = 20;
-let countdownInterval = null;
-let countdownRemaining = COUNTDOWN_SEC;
-
-function startCountdown() {
-  stopCountdown();
-  countdownRemaining = COUNTDOWN_SEC;
-  updateCountdownUI(COUNTDOWN_SEC);
-
-  countdownInterval = setInterval(() => {
-    countdownRemaining--;
-    updateCountdownUI(countdownRemaining);
-
-    if (countdownRemaining <= 0) {
-      stopCountdown();
-      onCountdownExpired();
-    }
-  }, 1000);
-}
-
-function stopCountdown() {
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
-    countdownInterval = null;
-  }
-}
-
-function updateCountdownUI(sec) {
-  const num  = $('countdown-num');
-  const fill = $('countdown-fill');
-  const bar  = $('countdown-bar');
-
-  const pct = (sec / COUNTDOWN_SEC) * 100;
-  num.textContent = sec;
-  fill.style.width = pct + '%';
-
-  // Farb- und Animationsstufen
-  const isWarning = sec <= 10 && sec > 5;
-  const isDanger  = sec <= 5;
-
-  num.className  = 'countdown-num'  + (isDanger ? ' danger' : isWarning ? ' warning' : '');
-  fill.className = 'countdown-fill' + (isDanger ? ' danger' : isWarning ? ' warning' : '');
-  bar.className  = 'countdown-bar'  + (isDanger ? ' danger' : isWarning ? ' warning' : '');
-}
-
-function onCountdownExpired() {
-  if (G.submitted) return;
-  // Zeit abgelaufen → 0 Punkte, kein Guess
-  playTimeoutSound();
-  G.submitted = true;
-  $('g-inp').disabled  = true;
-  $('btn-sub').disabled = true;
-
-  const actual = G.current.viewers;
-  G.score += 0;
-  G.history.push({ channel:G.current.channel, game:G.current.game, guess:0, actual, pts:0, timeout:true });
-
-  $('overlay-viewers').textContent = fN(actual);
-  $('result-overlay').classList.add('visible');
-  $('viewer-blur-bar').classList.add('hidden');
-
-  $('rv-guess').textContent  = '—';
-  $('rv-actual').textContent = fN(actual);
-  $('fb-badge').textContent  = '⏰ Zeit abgelaufen!';
-  $('fb-badge').className    = 'feedback-badge miss';
-  $('pts-gained').textContent = '+0 Punkte';
-
-  $('acc-bar').style.width      = '0%';
-  $('acc-bar').style.background = 'var(--red)';
-
-  $('res-area').classList.add('visible');
-  const isLast = G.round >= G.rounds;
-  $('btn-next').textContent   = isLast ? 'Ergebnis ansehen →' : 'Nächster Stream →';
-  $('btn-next').style.display = 'inline-flex';
-}
-
-/* ══════════════════════════════════════════════
-   TWITCH EMBED
+   STREAM LADEN
 ══════════════════════════════════════════════ */
 function loadStream(login) {
   $('stream-loading').classList.remove('hidden');
   $('result-overlay').classList.remove('visible');
   $('viewer-blur-bar').classList.remove('hidden');
-
-  const iframe = $('twitch-iframe');
-  const parent = window.location.hostname || 'localhost';
-  const src = `https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
-
-  iframe.onload = () => setTimeout(()=>$('stream-loading').classList.add('hidden'), 1200);
-  setTimeout(()=>$('stream-loading').classList.add('hidden'), 14000);
-  iframe.src = src;
+  const iframe=$('twitch-iframe');
+  const parent=window.location.hostname||'localhost';
+  iframe.onload=()=>setTimeout(()=>$('stream-loading').classList.add('hidden'),1200);
+  setTimeout(()=>$('stream-loading').classList.add('hidden'),14000);
+  iframe.src=`https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
 }
 
 /* ══════════════════════════════════════════════
    RUNDEN
 ══════════════════════════════════════════════ */
 async function nextRound() {
-  stopCountdown();
   G.submitted=false;
+  MP.roundGuesses={};MP.revealed=false;
   $('g-inp').value='';$('g-inp').disabled=false;$('btn-sub').disabled=false;
   $('res-area').classList.remove('visible');$('btn-next').style.display='none';
   $('err-box').classList.remove('visible');$('result-overlay').classList.remove('visible');
   $('viewer-blur-bar').classList.remove('hidden');
   $('s-name').textContent='—';$('s-game').textContent='—';$('rc').textContent=G.round+1;
-  updateCountdownUI(COUNTDOWN_SEC);
+  renderRoundGuesses();
 
   let stream;
   try{stream=await pickStream();}catch(e){showErr(e.message);return;}
   if(!stream){showErr('Keine weiteren deutschen Livestreams verfügbar.');return;}
 
   G.current=stream;G.round++;
-  $('rc').textContent=G.round;$('s-name').textContent=stream.channel;$('s-game').textContent=stream.game;
+  $('rc').textContent=G.round;
+  $('s-name').textContent=stream.channel;
+  $('s-game').textContent=stream.game;
+
   loadStream(stream.login);
-  startCountdown();
+  connectChat(stream.login); // Chat-Connection für diesen Kanal
   $('g-inp').focus();
 }
 
 async function pickStream() {
-  if(G.used.length>=G.pool.length) {
+  if(G.used.length>=G.pool.length){
     if(!G.demo){G.pool=await loadGermanStreams();if(!G.pool.length)throw new Error('Keine deutschen Streams live.');}
     else G.pool=shuffle([...DEMO]);
     G.used=[];
@@ -825,7 +920,7 @@ async function pickStream() {
   G.used.push(idx);return G.pool[idx];
 }
 
-function showErr(msg){stopCountdown();$('stream-loading').classList.add('hidden');$('err-msg').textContent=msg;$('err-box').classList.add('visible');}
+function showErr(msg){$('stream-loading').classList.add('hidden');$('err-msg').textContent=msg;$('err-box').classList.add('visible');}
 $('btn-retry').addEventListener('click',nextRound);
 
 /* ══════════════════════════════════════════════
@@ -838,11 +933,17 @@ function submitGuess() {
   if(G.submitted)return;
   const guess=parseInt($('g-inp').value.trim());
   if(isNaN(guess)||guess<0){toast('Bitte eine gültige Zahl eingeben!');return;}
-  stopCountdown();
   G.submitted=true;$('g-inp').disabled=true;$('btn-sub').disabled=true;
 
   const actual=G.current.viewers,pts=calcPts(guess,actual),fb=getFeedback(pts);
-  G.score+=pts;G.history.push({channel:G.current.channel,game:G.current.game,guess,actual,pts});
+  G.score+=pts;
+  G.history.push({channel:G.current.channel,game:G.current.game,guess,actual,pts});
+
+  // Streamer-Punkte ins Leaderboard
+  addStreamerToLeaderboard(pts);
+
+  // Chat-Guesses aufdecken
+  revealChatGuesses();
 
   $('overlay-viewers').textContent=fN(actual);
   $('result-overlay').classList.add('visible');
@@ -871,35 +972,44 @@ $('btn-next').addEventListener('click',()=>{if(G.round>=G.rounds)showResults();e
 /* ══════════════════════════════════════════════
    ERGEBNISSE
 ══════════════════════════════════════════════ */
-function showResults(){
-  show('screen-results');$('final-sc').textContent=fN(G.score);
+function showResults() {
+  disconnectChat();
+  show('screen-results');
+  $('final-sc').textContent=fN(G.score);
   const avg=G.score/G.rounds;
   $('rank-txt').textContent=avg>=800?'🏆 Absoluter Profi – bist du ein Twitch-Insider?':avg>=600?'🎯 Sehr gut! Du kennst die deutschen Streams.':avg>=350?'👍 Solide Leistung – weiter so!':'📺 Schau mehr deutsche Streams, dann klappt\'s besser!';
+
+  // Streamer-Runden
   $('tbl-rows').innerHTML='';
   G.history.forEach((r,i)=>{
-    const row=document.createElement('div');row.className='tbl-row';
-    row.innerHTML=`<span class="rn">${i+1}</span><span class="sc">${r.channel}<br><span style="color:var(--text-dim);font-size:0.67rem;">${r.game}</span></span><span class="nc">${fN(r.guess)}</span><span class="ac">${fN(r.actual)}</span><span class="pc">${fN(r.pts)}</span>`;
+    const row=document.createElement('div');row.className='tbl-row-s';
+    row.innerHTML=`<span class="rn">${i+1}</span><span class="sc">${r.channel}<br><span style="color:var(--text-dim);font-size:0.65rem;">${r.game}</span></span><span class="nc">${fN(r.guess)}</span><span class="ac">${fN(r.actual)}</span><span class="pc">${fN(r.pts)}</span>`;
     $('tbl-rows').appendChild(row);
   });
+
+  // Chat-Highscores
+  $('tbl-chat-rows').innerHTML='';
+  const chatEntries=Object.values(MP.totals)
+    .filter(e=>e.login!==G.userName?.toLowerCase())
+    .sort((a,b)=>b.total-a.total).slice(0,20);
+
+  if(chatEntries.length===0){
+    $('tbl-chat-rows').innerHTML='<div style="padding:20px;text-align:center;font-size:0.75rem;color:var(--text-dim);">Keine Zuschauer haben mitgespielt</div>';
+  } else {
+    chatEntries.forEach((e,i)=>{
+      const row=document.createElement('div');row.className='tbl-row-l';
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+      row.innerHTML=`<span class="rn">${medal}</span><span class="sc">${escHtml(e.display)}</span><span class="pc">${fN(e.total)}</span>`;
+      $('tbl-chat-rows').appendChild(row);
+    });
+  }
 }
+
 $('btn-again').addEventListener('click',()=>show('screen-menu'));
 
-/* Timeout-Sound: dreifaches absteigendes Piepen */
-function playTimeoutSound() {
-  try {
-    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.18, 0.36].forEach((delay, i) => {
-      const o = actx.createOscillator(), g = actx.createGain();
-      o.connect(g); g.connect(actx.destination);
-      const t = actx.currentTime + delay;
-      o.type = 'sine';
-      o.frequency.setValueAtTime(300 - i * 60, t);
-      g.gain.setValueAtTime(0.18, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      o.start(t); o.stop(t + 0.15);
-    });
-  } catch(e) {}
-}
+/* ══════════════════════════════════════════════
+   SOUND
+══════════════════════════════════════════════ */
 let actx=null;
 function playSound(pts){
   try{
@@ -915,3 +1025,4 @@ function playSound(pts){
 </script>
 </body>
 </html>
+
