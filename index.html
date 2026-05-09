@@ -116,12 +116,36 @@
     }
     .game-left { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
-    /* Stream */
+    /* Stream Wrap: Thumbnail sofort, Player im Hintergrund */
     .stream-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); box-shadow: var(--shadow); }
-    .viewer-blur-bar { position: absolute; top: 0; left: 0; width: 54%; height: 20%; z-index: 6; backdrop-filter: blur(28px) saturate(0.15) brightness(0.85); -webkit-backdrop-filter: blur(28px) saturate(0.15) brightness(0.85); background: rgba(80,30,160,0.15); pointer-events: none; transition: opacity 0.3s; }
+
+    /* Thumbnail – sofort sichtbar */
+    #stream-thumb {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+      transition: opacity 0.4s;
+    }
+
+    /* Thumbnail-Overlay mit Play-Indikator */
+    .thumb-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.5) 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .thumb-overlay.hidden { display: none; }
+
+    /* iframe liegt über Thumbnail, startet unsichtbar */
+    #twitch-iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+      opacity: 0; transition: opacity 0.6s;
+      z-index: 3;
+    }
+    #twitch-iframe.ready { opacity: 1; }
+    .viewer-blur-bar { position: absolute; top: 0; left: 0; width: 54%; height: 20%; z-index: 8; backdrop-filter: blur(28px) saturate(0.15) brightness(0.85); -webkit-backdrop-filter: blur(28px) saturate(0.15) brightness(0.85); background: rgba(80,30,160,0.15); pointer-events: none; transition: opacity 0.3s; }
     :fullscreen .viewer-blur-bar, :-webkit-full-screen .viewer-blur-bar { position: fixed; top: 0; left: 0; width: 54vw; height: 12vh; z-index: 2147483647; }
     .viewer-blur-bar.hidden { opacity: 0; pointer-events: none; }
-    #twitch-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
     .stream-loading { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; background: #0d0d0f; transition: opacity 0.5s; }
     .stream-loading.hidden { opacity: 0; pointer-events: none; }
     .spin-ring { width: 44px; height: 44px; border: 3px solid rgba(145,71,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -390,10 +414,10 @@
       <!-- LINKE SPALTE: Stream + Schätz-Panel -->
       <div class="game-left">
         <div class="stream-wrap">
-          <div class="stream-loading" id="stream-loading">
-            <div class="spin-ring"></div>
-            <span class="load-txt">Lade Stream…</span>
-          </div>
+          <!-- Thumbnail: sofort sichtbar, cached von Twitch CDN -->
+          <img id="stream-thumb" src="" alt="Stream" />
+          <div class="thumb-overlay" id="thumb-overlay"></div>
+          <!-- iframe lädt im Hintergrund, blendet sich ein wenn bereit -->
           <iframe id="twitch-iframe" allowfullscreen allow="autoplay; fullscreen" src="about:blank"></iframe>
           <div class="viewer-blur-bar" id="viewer-blur-bar"></div>
           <div class="result-overlay" id="result-overlay">
@@ -896,25 +920,36 @@ $('modal-menu').addEventListener('click',e=>{if(e.target===$('modal-menu'))$('mo
    STREAM LADEN
 ══════════════════════════════════════════════ */
 function loadStream(login) {
-  $('stream-loading').classList.remove('hidden');
   $('result-overlay').classList.remove('visible');
   $('viewer-blur-bar').classList.remove('hidden');
 
-  const iframe = $('twitch-iframe');
+  const iframe  = $('twitch-iframe');
+  const thumb   = $('stream-thumb');
+  const overlay = $('thumb-overlay');
+
+  // 1. Thumbnail sofort setzen – Twitch CDN liefert das in <100ms
+  // Cache-Buster damit immer das aktuelle Frame kommt
+  thumb.src = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${login.toLowerCase()}-1280x720.jpg?t=${Date.now()}`;
+  overlay.classList.remove('hidden');
+
+  // 2. iframe unsichtbar im Hintergrund starten
+  iframe.classList.remove('ready');
+  iframe.src = 'about:blank';
+
   const parent = window.location.hostname || 'localhost';
   const src = `https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
 
-  // Alten Stream sofort stoppen, dann neuen laden
-  iframe.src = 'about:blank';
-  iframe.onload = null;
-
+  // Kleines Delay damit der Browser zuerst das Thumbnail rendert
   setTimeout(() => {
-    iframe.onload = () => setTimeout(() => $('stream-loading').classList.add('hidden'), 800);
+    iframe.onload = () => {
+      // Player bereit → iframe einblenden, Thumbnail ausblenden
+      setTimeout(() => {
+        iframe.classList.add('ready');
+        overlay.classList.add('hidden');
+      }, 2000); // 2 Sek warten bis Twitch-Player wirklich spielt
+    };
     iframe.src = src;
-  }, 50);
-
-  // Spinner spätestens nach 8 Sek ausblenden
-  setTimeout(() => $('stream-loading').classList.add('hidden'), 8000);
+  }, 100);
 }
 
 /* ══════════════════════════════════════════════
@@ -957,7 +992,10 @@ async function pickStream() {
   G.used.push(idx);return G.pool[idx];
 }
 
-function showErr(msg){$('stream-loading').classList.add('hidden');$('err-msg').textContent=msg;$('err-box').classList.add('visible');}
+function showErr(msg) {
+  $('err-msg').textContent = msg;
+  $('err-box').classList.add('visible');
+}
 $('btn-retry').addEventListener('click',nextRound);
 
 /* ══════════════════════════════════════════════
@@ -1062,3 +1100,4 @@ function playSound(pts){
 </script>
 </body>
 </html>
+
