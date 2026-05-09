@@ -802,7 +802,7 @@ function revealChatGuesses() {
 ══════════════════════════════════════════════ */
 function getRedirectUri() { return 'https://kieskauer.github.io/viewcount-guessr/'; }
 function startTwitchLogin() {
-  const p = new URLSearchParams({ client_id:v3hih0hj6dlk4nvq2h6c1a3k61ibro, redirect_uri:getRedirectUri(), response_type:'token', scope:'user:read:email' });
+  const p = new URLSearchParams({ client_id:TWITCH_CLIENT_ID, redirect_uri:getRedirectUri(), response_type:'token', scope:'user:read:email' });
   window.location.href = `https://id.twitch.tv/oauth2/authorize?${p}`;
 }
 function extractTokenFromHash() {
