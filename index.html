@@ -109,9 +109,17 @@
     #twitch-iframe { position:absolute; inset:0; width:100%; height:100%; border:none; z-index:2; opacity:0; transition:opacity 0.8s; }
     #twitch-iframe.visible { opacity:1; }
 
-    /* Blur über Zuschauerzahl */
-    .viewer-blur-bar { position:absolute; top:0; left:0; width:54%; height:20%; z-index:6; backdrop-filter:blur(28px) saturate(0.15) brightness(0.85); -webkit-backdrop-filter:blur(28px) saturate(0.15) brightness(0.85); background:rgba(80,30,160,0.15); pointer-events:none; transition:opacity 0.3s; }
-    :fullscreen .viewer-blur-bar,:-webkit-full-screen .viewer-blur-bar { position:fixed; top:0; left:0; width:54vw; height:12vh; z-index:2147483647; }
+    /* Blur über die komplette obere Infoleiste (Titel + Zuschauerzahl) */
+    .viewer-blur-bar {
+      position:absolute; top:0; left:0;
+      width:100%; height:22%;
+      z-index:6;
+      backdrop-filter:blur(28px) saturate(0.15) brightness(0.85);
+      -webkit-backdrop-filter:blur(28px) saturate(0.15) brightness(0.85);
+      background:rgba(80,30,160,0.15);
+      pointer-events:none; transition:opacity 0.3s;
+    }
+    :fullscreen .viewer-blur-bar,:-webkit-full-screen .viewer-blur-bar { position:fixed; top:0; left:0; width:100vw; height:12vh; z-index:2147483647; }
     .viewer-blur-bar.hidden { opacity:0; pointer-events:none; }
 
     /* Ergebnis-Overlay */
@@ -857,4 +865,3 @@ function playSound(pts){
 </script>
 </body>
 </html>
-
