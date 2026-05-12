@@ -112,14 +112,14 @@
     /* Blur über Titel + Zuschauerzahl oben links */
     .viewer-blur-bar {
       position:absolute; top:0; left:0;
-      width:60%; height:13%;
+      width:48%; height:17%;
       z-index:6;
       backdrop-filter:blur(28px) saturate(0.15) brightness(0.85);
       -webkit-backdrop-filter:blur(28px) saturate(0.15) brightness(0.85);
       background:rgba(80,30,160,0.15);
       pointer-events:none; transition:opacity 0.3s;
     }
-    :fullscreen .viewer-blur-bar,:-webkit-full-screen .viewer-blur-bar { position:fixed; top:0; left:0; width:60vw; height:10vh; z-index:2147483647; }
+    :fullscreen .viewer-blur-bar,:-webkit-full-screen .viewer-blur-bar { position:fixed; top:0; left:0; width:48vw; height:12vh; z-index:2147483647; }
     .viewer-blur-bar.hidden { opacity:0; pointer-events:none; }
 
     /* Ergebnis-Overlay */
@@ -865,3 +865,4 @@ function playSound(pts){
 </script>
 </body>
 </html>
+
