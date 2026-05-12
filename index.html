@@ -77,6 +77,11 @@
     .lang-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
     .lang-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
 
+    .cat-options { display:flex; gap:8px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+    .cat-btn { flex:1; min-width:90px; height:44px; border:1px solid var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.78rem; cursor:pointer; transition:all 0.18s; }
+    .cat-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .cat-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+
     /* BUTTONS */
     .btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:13px 30px; font-family:'Bebas Neue',cursive; font-size:1.05rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.18s; box-shadow:0 4px 18px var(--accent-glow); }
     .btn-primary:hover:not(:disabled) { background:var(--accent-light); transform:translateY(-2px); }
@@ -298,6 +303,13 @@
         <button class="lang-btn" data-lang="en">🇬🇧 Englisch</button>
         <button class="lang-btn active" data-lang="de,en">🌍 Beide</button>
       </div>
+
+      <div class="round-label" style="margin-top:8px;">Kategorie</div>
+      <div class="cat-options">
+        <button class="cat-btn active" data-cat="">🎮 Alle</button>
+        <button class="cat-btn" data-cat="509658">💬 Just Chatting</button>
+        <button class="cat-btn" data-cat="494717">🌍 IRL</button>
+      </div>
       <button class="btn-primary" id="btn-start">▶ &nbsp;Spiel starten</button>
       <div style="margin-top:14px;"><button class="btn-ghost" id="btn-logout">Abmelden</button></div>
     </div>
@@ -459,7 +471,7 @@ const DEMO = [
 /* ══════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════ */
-const G = {demo:false,token:'',userName:'',pool:[],used:[],rounds:10,round:0,score:0,history:[],current:null,submitted:false,lang:'de,en'};
+const G = {demo:false,token:'',userName:'',pool:[],used:[],rounds:10,round:0,score:0,history:[],current:null,submitted:false,lang:'de,en',cat:''};
 const MP = {totals:{},roundGuesses:{},revealed:false};
 
 const $  = id => document.getElementById(id);
@@ -659,30 +671,29 @@ $('btn-logout').addEventListener('click',()=>{clearToken();G.token='';G.userName
    API – Streams laden (erste Seite sofort, rest im Hintergrund)
 ══════════════════════════════════════════════ */
 async function loadStreams(){
-  // Sprachen aufsplitten und mehrere API-Calls parallel machen wenn nötig
   const langs = G.lang.split(',');
+  const catParam = G.cat ? `&game_id=${G.cat}` : '';
   const fetches = langs.map(lang =>
-    fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}})
+    fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}})
       .then(r=>r.json()).then(d=>(d.data||[]).filter(s=>s.viewer_count>0))
       .catch(()=>[])
   );
   const results = await Promise.all(fetches);
   const all = results.flat();
-  if(!all.length) throw new Error('Keine Streams gefunden.');
+  if(!all.length) throw new Error('Keine Streams für diese Auswahl gefunden.');
   const streams = shuffle(all.map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
-  // Rest im Hintergrund nachladen
-  langs.forEach(lang => loadMoreStreams(lang));
+  langs.forEach(lang => loadMoreStreams(lang, catParam));
   return streams;
 }
 
-async function loadMoreStreams(lang){
+async function loadMoreStreams(lang, catParam=''){
   try{
-    const r=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+    const r=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
     if(!r.ok)return;
     const d=await r.json();
     let cursor=d.pagination?.cursor;
     for(let p=0;p<3&&cursor;p++){
-      const r2=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100&after=${cursor}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+      const r2=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}&after=${cursor}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
       if(!r2.ok)break;
       const d2=await r2.json();
       const more=(d2.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count}));
@@ -697,6 +708,10 @@ async function loadMoreStreams(lang){
 ══════════════════════════════════════════════ */
 document.querySelectorAll('.lang-btn').forEach(b=>{
   b.addEventListener('click',()=>{document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.lang=b.dataset.lang;});
+});
+
+document.querySelectorAll('.cat-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.cat=b.dataset.cat;});
 });
 
 document.querySelectorAll('.round-btn').forEach(b=>{
