@@ -467,7 +467,6 @@ function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.fl
 function calcPts(g,a){if(!a)return 0;return Math.max(0,Math.round(1000*Math.exp(-3.5*Math.abs(g-a)/a)));}
 function getFb(p){if(p>=900)return{txt:'🔥 Perfekt!',cls:'perfect'};if(p>=600)return{txt:'⚡ Sehr nah!',cls:'great'};if(p>=250)return{txt:'👍 Ganz gut!',cls:'good'};return{txt:'💀 Weit daneben!',cls:'miss'};}
 function toast(msg,ms=2800){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),ms);}
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
 
 /* ══════════════════════════════════════════════
    TWITCH IRC CHAT (anonym, read-only)
@@ -960,15 +959,12 @@ function playChord() {
   musicNodes.push(bassOsc);
 }
 
-/* Screen-Wechsel überschreiben damit Musik startet/stoppt */
-const _show = show;
-function show(id) {
-  _show(id);
-  if (id === 'screen-menu' || id === 'screen-login') {
-    startMenuMusic();
-  } else {
-    stopMenuMusic();
-  }
+/* Screen-Wechsel: Musik startet/stoppt je nach Screen */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  if(id==='screen-menu'||id==='screen-login'){startMenuMusic();}
+  else{stopMenuMusic();}
 }
 
 /* Musik beim ersten Klick starten (Browser-Autoplay-Policy) */
@@ -993,4 +989,3 @@ function playSound(pts){
 </script>
 </body>
 </html>
-
