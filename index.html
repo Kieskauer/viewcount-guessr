@@ -72,6 +72,16 @@
     .round-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
     .round-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
 
+    .lang-options { display:flex; gap:8px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+    .lang-btn { flex:1; min-width:90px; height:44px; border:1px solid var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.78rem; cursor:pointer; transition:all 0.18s; }
+    .lang-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .lang-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+
+    .cat-options { display:flex; gap:8px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+    .cat-btn { flex:1; min-width:90px; height:44px; border:1px solid var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.78rem; cursor:pointer; transition:all 0.18s; }
+    .cat-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .cat-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+
     /* BUTTONS */
     .btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:13px 30px; font-family:'Bebas Neue',cursive; font-size:1.05rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.18s; box-shadow:0 4px 18px var(--accent-glow); }
     .btn-primary:hover:not(:disabled) { background:var(--accent-light); transform:translateY(-2px); }
@@ -447,7 +457,7 @@ const DEMO = [
 /* ══════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════ */
-const G = {demo:false,token:'',userName:'',pool:[],used:[],rounds:10,round:0,score:0,history:[],current:null,submitted:false};
+const G = {demo:false,token:'',userName:'',pool:[],used:[],rounds:10,round:0,score:0,history:[],current:null,submitted:false,lang:'de,en',cat:''};
 const MP = {totals:{},roundGuesses:{},revealed:false};
 
 const $  = id => document.getElementById(id);
@@ -647,29 +657,49 @@ $('btn-logout').addEventListener('click',()=>{clearToken();G.token='';G.userName
    API – Streams laden (erste Seite sofort, rest im Hintergrund)
 ══════════════════════════════════════════════ */
 async function loadStreams(){
-  const r=await fetch('https://api.twitch.tv/helix/streams?language=de&first=100',{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
-  if(!r.ok){const e=await r.json().catch(()=>{});throw new Error(e?.message||`API ${r.status}`);}
-  const d=await r.json();
-  const streams=shuffle((d.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
-  if(d.pagination?.cursor)loadMoreStreams(d.pagination.cursor);
+  const langs = G.lang.split(',');
+  const catParam = G.cat ? `&game_id=${G.cat}` : '';
+  const fetches = langs.map(lang =>
+    fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}})
+      .then(r=>r.json()).then(d=>(d.data||[]).filter(s=>s.viewer_count>0))
+      .catch(()=>[])
+  );
+  const results = await Promise.all(fetches);
+  const all = results.flat();
+  if(!all.length) throw new Error('Keine Streams für diese Auswahl gefunden.');
+  const streams = shuffle(all.map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
+  langs.forEach(lang => loadMoreStreams(lang, catParam));
   return streams;
 }
-async function loadMoreStreams(cursor){
-  for(let p=0;p<4;p++){
-    try{
-      const r=await fetch(`https://api.twitch.tv/helix/streams?language=de&first=100&after=${cursor}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
-      if(!r.ok)break;
-      const d=await r.json();
-      const more=(d.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count}));
+
+async function loadMoreStreams(lang, catParam=''){
+  try{
+    const r=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+    if(!r.ok)return;
+    const d=await r.json();
+    let cursor=d.pagination?.cursor;
+    for(let p=0;p<3&&cursor;p++){
+      const r2=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}&after=${cursor}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+      if(!r2.ok)break;
+      const d2=await r2.json();
+      const more=(d2.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count}));
       G.pool.push(...more);
-      cursor=d.pagination?.cursor;if(!cursor)break;
-    }catch(e){break;}
-  }
+      cursor=d2.pagination?.cursor;
+    }
+  }catch(e){}
 }
 
 /* ══════════════════════════════════════════════
    MENU
 ══════════════════════════════════════════════ */
+document.querySelectorAll('.lang-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.lang=b.dataset.lang;});
+});
+
+document.querySelectorAll('.cat-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.cat=b.dataset.cat;});
+});
+
 document.querySelectorAll('.round-btn').forEach(b=>{
   b.addEventListener('click',()=>{document.querySelectorAll('.round-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.rounds=parseInt(b.dataset.r);});
 });
@@ -848,14 +878,112 @@ function showResults(){
 $('btn-again').addEventListener('click',()=>show('screen-menu'));
 
 /* ══════════════════════════════════════════════
-   SOUND
+   MENÜ-MUSIK
+   Entspannter Lo-Fi Ambient-Sound generiert mit
+   der Web Audio API – kein externes File nötig.
+   Aufbau: sanfte Akkord-Pads + leise Bass-Noten
+   die sich langsam abwechseln.
 ══════════════════════════════════════════════ */
-let actx=null;
+let musicCtx   = null;
+let musicNodes = [];   // alle aktiven Nodes zum Stoppen
+let musicTimer = null; // Interval-ID
+
+// Lo-Fi Akkord-Progression (Cmaj7 → Am7 → Fmaj7 → G7)
+const CHORDS = [
+  [261.63, 329.63, 392.00, 493.88],  // Cmaj7
+  [220.00, 261.63, 329.63, 415.30],  // Am7
+  [174.61, 220.00, 261.63, 329.63],  // Fmaj7
+  [196.00, 246.94, 293.66, 349.23],  // G7
+];
+const BASS = [130.81, 110.00, 87.31, 98.00]; // Bass-Noten dazu
+
+let chordIdx = 0;
+
+function startMenuMusic() {
+  stopMenuMusic();
+  try {
+    if (!musicCtx) musicCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (musicCtx.state === 'suspended') musicCtx.resume();
+    playChord();
+    musicTimer = setInterval(playChord, 3200); // alle 3,2 Sek neuer Akkord
+  } catch(e) {}
+}
+
+function stopMenuMusic() {
+  if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+  musicNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  musicNodes = [];
+}
+
+function playChord() {
+  if (!musicCtx) return;
+  const t = musicCtx.currentTime;
+  const chord = CHORDS[chordIdx % CHORDS.length];
+  const bass  = BASS[chordIdx % BASS.length];
+  chordIdx++;
+
+  // Master-Gain für diesen Akkord
+  const master = musicCtx.createGain();
+  master.connect(musicCtx.destination);
+  master.gain.setValueAtTime(0, t);
+  master.gain.linearRampToValueAtTime(0.07, t + 0.8);   // sanftes Einblenden
+  master.gain.setValueAtTime(0.07, t + 2.2);
+  master.gain.linearRampToValueAtTime(0, t + 3.2);       // sanftes Ausblenden
+
+  // Pad-Töne (mehrere Obertöne pro Note für wärmeren Sound)
+  chord.forEach(freq => {
+    [1, 2, 0.5].forEach((detune, i) => {
+      const osc = musicCtx.createOscillator();
+      const g   = musicCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * detune, t);
+      osc.frequency.setValueAtTime(freq * detune * (1 + (Math.random()-0.5)*0.002), t + 0.1); // leichtes Vibrato
+      g.gain.setValueAtTime(i === 0 ? 0.6 : 0.15, t);
+      osc.connect(g);
+      g.connect(master);
+      osc.start(t);
+      osc.stop(t + 3.3);
+      musicNodes.push(osc);
+    });
+  });
+
+  // Bass-Note (leiser, tiefer)
+  const bassOsc = musicCtx.createOscillator();
+  const bassG   = musicCtx.createGain();
+  bassOsc.type = 'triangle';
+  bassOsc.frequency.setValueAtTime(bass, t);
+  bassG.gain.setValueAtTime(0.5, t);
+  bassOsc.connect(bassG);
+  bassG.connect(master);
+  bassOsc.start(t);
+  bassOsc.stop(t + 3.3);
+  musicNodes.push(bassOsc);
+}
+
+/* Screen-Wechsel überschreiben damit Musik startet/stoppt */
+const _show = show;
+function show(id) {
+  _show(id);
+  if (id === 'screen-menu' || id === 'screen-login') {
+    startMenuMusic();
+  } else {
+    stopMenuMusic();
+  }
+}
+
+/* Musik beim ersten Klick starten (Browser-Autoplay-Policy) */
+document.addEventListener('click', () => {
+  const active = document.querySelector('.screen.active');
+  if (active && (active.id === 'screen-menu' || active.id === 'screen-login')) {
+    if (!musicTimer) startMenuMusic();
+  }
+}, { once: true });
+
 function playSound(pts){
   try{
-    if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
-    const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);
-    const t=actx.currentTime;
+    if(!musicCtx)musicCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=musicCtx.createOscillator(),g=musicCtx.createGain();o.connect(g);g.connect(musicCtx.destination);
+    const t=musicCtx.currentTime;
     if(pts>=900){o.frequency.setValueAtTime(440,t);o.frequency.setValueAtTime(554,t+.1);o.frequency.setValueAtTime(660,t+.2);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.65);o.start(t);o.stop(t+.65);}
     else if(pts>=500){o.frequency.setValueAtTime(392,t);o.frequency.setValueAtTime(523,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.start(t);o.stop(t+.4);}
     else if(pts>=200){o.frequency.setValueAtTime(330,t);g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3);}
