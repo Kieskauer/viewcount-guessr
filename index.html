@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viewcount Guessr</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep:      #0d0d0f;
+      --bg-card:      #18181b;
+      --bg-hover:     #1f1f23;
+      --border:       #2a2a2f;
+      --accent:       #9147ff;
+      --accent-light: #b77dff;
+      --accent-glow:  rgba(145,71,255,0.35);
+      --accent-dim:   rgba(145,71,255,0.12);
+      --green:        #00e5a0;
+      --yellow:       #ffcc00;
+      --red:          #ff4d6d;
+      --text-primary: #efeff1;
+      --text-muted:   #adadb8;
+      --text-dim:     #5a5a6e;
+      --radius:       12px;
+      --radius-sm:    8px;
+      --shadow:       0 8px 40px rgba(0,0,0,0.6);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Mono', monospace; background: var(--bg-deep); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+    body::before { content:''; position:fixed; inset:0; background-image: linear-gradient(rgba(145,71,255,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(145,71,255,0.025) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+    .wrapper { position:relative; z-index:1; width:100%; max-width:1200px; padding:0 16px 80px; }
+
+    /* HEADER */
+    header { display:flex; align-items:center; justify-content:center; gap:14px; padding:28px 0 20px; }
+    .logo-icon { width:38px; height:38px; background:var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 24px var(--accent-glow); flex-shrink:0; }
+    .logo-icon svg { width:20px; height:20px; fill:#fff; }
+    h1 { font-family:'Bebas Neue',cursive; font-size:clamp(1.8rem,5vw,3rem); letter-spacing:0.04em; line-height:1; }
+    h1 span { color:var(--accent); }
+
+    .screen { display:none; flex-direction:column; }
+    .screen.active { display:flex; }
+    .card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+
+    /* LOGIN */
+    #screen-login { align-items:center; gap:24px; padding:16px 0 40px; }
+    .login-card { padding:40px 44px; max-width:420px; width:100%; text-align:center; }
+    .login-card h2 { font-family:'Bebas Neue',cursive; font-size:1.8rem; letter-spacing:0.05em; margin-bottom:10px; }
+    .login-card > p { color:var(--text-muted); font-size:0.8rem; line-height:1.7; margin-bottom:32px; }
+    .btn-twitch-login { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:15px 24px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); font-family:'Bebas Neue',cursive; font-size:1.2rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.18s; box-shadow:0 4px 24px rgba(145,71,255,0.5); }
+    .btn-twitch-login:hover:not(:disabled) { background:var(--accent-light); transform:translateY(-2px); }
+    .btn-twitch-login:disabled { opacity:0.5; cursor:not-allowed; }
+    .btn-twitch-login svg { width:20px; height:20px; fill:#fff; flex-shrink:0; }
+    .login-divider { display:flex; align-items:center; gap:12px; margin:22px 0; color:var(--text-dim); font-size:0.72rem; }
+    .login-divider::before,.login-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .login-info { display:flex; align-items:flex-start; gap:10px; margin-top:24px; padding:12px 14px; text-align:left; background:var(--bg-hover); border-radius:var(--radius-sm); font-size:0.72rem; color:var(--text-dim); line-height:1.55; }
+    .login-info svg { width:15px; height:15px; fill:var(--text-dim); flex-shrink:0; margin-top:1px; }
+
+    /* MENU */
+    #screen-menu { align-items:center; gap:28px; padding:16px 0 40px; }
+    .menu-card { padding:36px 44px; text-align:center; max-width:460px; width:100%; }
+    .menu-card h2 { font-family:'Bebas Neue',cursive; font-size:1.7rem; letter-spacing:0.05em; margin-bottom:8px; }
+    .menu-card > p { color:var(--text-muted); font-size:0.8rem; line-height:1.6; margin-bottom:20px; }
+    .user-badge { display:flex; align-items:center; gap:12px; background:var(--bg-hover); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:20px; text-align:left; }
+    .user-badge img { width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+    .user-badge-name { font-size:0.85rem; color:var(--text-primary); font-weight:500; }
+    .user-badge-sub { font-size:0.67rem; color:var(--text-dim); margin-top:2px; }
+    .round-label { font-size:0.67rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-dim); margin-bottom:10px; }
+    .round-options { display:flex; gap:10px; justify-content:center; margin-bottom:30px; }
+    .round-btn { width:64px; height:50px; border:1px solid var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-family:'Bebas Neue',cursive; font-size:1.4rem; cursor:pointer; transition:all 0.18s; }
+    .round-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .round-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+
+    .lang-options { display:flex; gap:8px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+    .lang-btn { flex:1; min-width:90px; height:44px; border:1px solid var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.78rem; cursor:pointer; transition:all 0.18s; }
+    .lang-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .lang-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+
+    .cat-options { display:flex; gap:8px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+    .cat-btn { flex:1; min-width:90px; height:44px; border:1px solid var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.78rem; cursor:pointer; transition:all 0.18s; }
+    .cat-btn:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .cat-btn.active { border-color:var(--accent); color:#fff; background:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+
+    /* BUTTONS */
+    .btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:13px 30px; font-family:'Bebas Neue',cursive; font-size:1.05rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.18s; box-shadow:0 4px 18px var(--accent-glow); }
+    .btn-primary:hover:not(:disabled) { background:var(--accent-light); transform:translateY(-2px); }
+    .btn-primary:active:not(:disabled) { transform:translateY(0); }
+    .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+    .btn-secondary { display:inline-flex; align-items:center; gap:8px; background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:var(--radius-sm); padding:11px 26px; font-family:'Bebas Neue',cursive; font-size:1.05rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.18s; }
+    .btn-secondary:hover { border-color:var(--accent-light); color:var(--accent-light); background:var(--accent-dim); }
+    .btn-ghost { background:none; border:none; color:var(--text-dim); font-family:'DM Mono',monospace; font-size:0.75rem; cursor:pointer; padding:4px 0; text-decoration:underline; transition:color 0.15s; }
+    .btn-ghost:hover { color:var(--text-muted); }
+    .btn-menu { display:inline-flex; align-items:center; gap:7px; background:transparent; color:var(--text-dim); border:1px solid var(--border); border-radius:var(--radius-sm); padding:7px 14px; font-family:'DM Mono',monospace; font-size:0.72rem; cursor:pointer; transition:all 0.18s; }
+    .btn-menu:hover { border-color:var(--text-muted); color:var(--text-muted); }
+    .btn-menu svg { width:13px; height:13px; fill:currentColor; }
+
+    /* GAME */
+    #screen-game { gap:16px; padding:8px 0; }
+    .top-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .round-indicator { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-dim); }
+    .round-indicator strong { color:var(--accent-light); font-size:1rem; }
+    .score-box { display:flex; align-items:center; gap:10px; padding:7px 16px; }
+    .score-box .lbl { font-size:0.64rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-dim); }
+    .score-val { font-family:'Bebas Neue',cursive; font-size:1.5rem; color:var(--accent-light); transition:transform .25s cubic-bezier(.34,1.56,.64,1),color .25s; }
+    .score-val.bump { transform:scale(1.4); color:#fff; }
+
+    /* 2-Spalten Layout */
+    .game-layout { display:grid; grid-template-columns:1fr 280px; gap:16px; align-items:start; }
+    .game-left { display:flex; flex-direction:column; gap:14px; min-width:0; }
+
+    /* Stream */
+    .stream-wrap { position:relative; width:100%; aspect-ratio:16/9; border-radius:var(--radius); overflow:hidden; background:#000; border:1px solid var(--border); box-shadow:var(--shadow); }
+
+    /* Thumbnail – sofort sichtbar */
+    #stream-thumb { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:1; }
+
+    /* Twitch iframe – lädt im Hintergrund, blendet sich ein wenn bereit */
+    #twitch-iframe { position:absolute; inset:0; width:100%; height:100%; border:none; z-index:2; opacity:0; transition:opacity 0.8s; }
+    #twitch-iframe.visible { opacity:1; }
+
+    /* Blur über Titel + Zuschauerzahl oben links */
+    .viewer-blur-bar {
+      position:absolute; top:0; left:0;
+      width:48%; height:20%;
+      z-index:6;
+      backdrop-filter:blur(28px) saturate(0.15) brightness(0.85);
+      -webkit-backdrop-filter:blur(28px) saturate(0.15) brightness(0.85);
+      background:rgba(80,30,160,0.15);
+      pointer-events:none; transition:opacity 0.3s;
+    }
+    :fullscreen .viewer-blur-bar,:-webkit-full-screen .viewer-blur-bar { position:fixed; top:0; left:0; width:48vw; height:12vh; z-index:2147483647; }
+    .viewer-blur-bar.hidden { opacity:0; pointer-events:none; }
+
+    /* Ergebnis-Overlay */
+    .result-overlay { position:absolute; inset:0; z-index:10; background:rgba(0,0,0,0.82); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; flex-direction:column; gap:10px; }
+    .result-overlay.visible { display:flex; }
+    .overlay-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.18em; color:rgba(255,255,255,0.55); }
+    .overlay-viewers { font-family:'Bebas Neue',cursive; font-size:clamp(3rem,8vw,5.5rem); color:var(--green); line-height:1; text-shadow:0 0 50px rgba(0,229,160,0.6); animation:zoomIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes zoomIn { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+    .overlay-sub { font-size:0.7rem; color:rgba(255,255,255,0.35); letter-spacing:0.1em; margin-top:4px; }
+
+    /* Fehler */
+    .error-box { display:none; flex-direction:column; align-items:center; gap:12px; padding:36px 20px; text-align:center; }
+    .error-box.visible { display:flex; }
+    .err-icon { font-size:2.4rem; }
+    .err-title { font-family:'Bebas Neue',cursive; font-size:1.4rem; color:var(--red); }
+    .err-msg { font-size:0.78rem; color:var(--text-muted); line-height:1.6; max-width:380px; }
+
+    /* Guess Panel */
+    .guess-panel { padding:22px 26px; display:flex; flex-direction:column; gap:16px; }
+    .guess-title { font-family:'Bebas Neue',cursive; font-size:1.1rem; letter-spacing:0.06em; color:var(--text-muted); }
+    .input-row { display:flex; gap:12px; align-items:stretch; }
+    .guess-input { flex:1; background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:'Bebas Neue',cursive; font-size:1.7rem; letter-spacing:0.05em; padding:10px 18px; outline:none; text-align:center; transition:border-color 0.18s,box-shadow 0.18s; -moz-appearance:textfield; }
+    .guess-input::-webkit-outer-spin-button,.guess-input::-webkit-inner-spin-button { -webkit-appearance:none; }
+    .guess-input::placeholder { color:var(--text-dim); }
+    .guess-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+    .guess-input:disabled { opacity:0.4; cursor:not-allowed; }
+    .result-area { display:none; flex-direction:column; gap:14px; }
+    .result-area.visible { display:flex; }
+    .reveal-row { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .reveal-block { display:flex; flex-direction:column; gap:4px; }
+    .reveal-label { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-dim); }
+    .reveal-val { font-family:'Bebas Neue',cursive; font-size:1.7rem; letter-spacing:0.04em; }
+    .reveal-val.actual { color:var(--green); }
+    .reveal-val.guess { color:var(--text-muted); }
+    .feedback-badge { display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:999px; font-size:0.76rem; font-weight:500; letter-spacing:0.06em; animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes popIn { from{opacity:0;transform:scale(0.65)} to{opacity:1;transform:scale(1)} }
+    .feedback-badge.perfect { background:rgba(0,229,160,0.15); color:var(--green); border:1px solid rgba(0,229,160,0.3); }
+    .feedback-badge.great { background:rgba(145,71,255,0.15); color:var(--accent-light); border:1px solid rgba(145,71,255,0.3); }
+    .feedback-badge.good { background:rgba(255,204,0,0.12); color:var(--yellow); border:1px solid rgba(255,204,0,0.3); }
+    .feedback-badge.miss { background:rgba(255,77,109,0.12); color:var(--red); border:1px solid rgba(255,77,109,0.3); }
+    .pts-gained { font-family:'Bebas Neue',cursive; font-size:1.3rem; color:var(--accent-light); animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .acc-bar-wrap { height:5px; background:var(--bg-deep); border-radius:99px; overflow:hidden; border:1px solid var(--border); }
+    .acc-bar { height:100%; border-radius:99px; transition:width 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .action-row { display:flex; gap:10px; justify-content:flex-end; align-items:center; flex-wrap:wrap; }
+
+    /* LEADERBOARD */
+    .leaderboard { display:flex; flex-direction:column; gap:12px; position:sticky; top:16px; }
+    .lb-card { padding:16px; }
+    .lb-title { font-family:'Bebas Neue',cursive; font-size:1rem; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    .lb-title svg { width:14px; height:14px; fill:var(--accent-light); }
+    .lb-row { display:grid; grid-template-columns:22px 1fr auto; gap:8px; align-items:center; padding:7px 8px; border-radius:var(--radius-sm); transition:background 0.15s; animation:fadeInRow 0.3s ease; }
+    @keyframes fadeInRow { from{opacity:0;transform:translateX(8px)} to{opacity:1;transform:translateX(0)} }
+    .lb-row:hover { background:var(--bg-hover); }
+    .lb-row.streamer { background:var(--accent-dim); border:1px solid rgba(145,71,255,0.2); }
+    .lb-rank { font-family:'Bebas Neue',cursive; font-size:0.9rem; color:var(--text-dim); text-align:center; }
+    .lb-rank.gold { color:#ffd700; }
+    .lb-rank.silver { color:#c0c0c0; }
+    .lb-rank.bronze { color:#cd7f32; }
+    .lb-name { font-size:0.75rem; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lb-name .you { font-size:0.6rem; color:var(--accent-light); margin-left:4px; }
+    .lb-pts { font-family:'Bebas Neue',cursive; font-size:1rem; color:var(--green); }
+    .lb-empty { font-size:0.72rem; color:var(--text-dim); text-align:center; padding:16px 0; line-height:1.6; }
+    .chat-status { display:flex; align-items:center; gap:6px; font-size:0.65rem; color:var(--text-dim); padding:0 2px; margin-bottom:8px; }
+    .chat-dot { width:6px; height:6px; border-radius:50%; background:var(--text-dim); flex-shrink:0; }
+    .chat-dot.connected { background:var(--green); animation:blink 1.5s ease-in-out infinite; }
+    .chat-dot.error { background:var(--red); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .round-guesses { display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto; }
+    .round-guesses::-webkit-scrollbar { width:3px; }
+    .round-guesses::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+    .rg-row { display:grid; grid-template-columns:1fr auto auto; gap:6px; align-items:center; font-size:0.7rem; padding:5px 8px; border-radius:4px; background:var(--bg-hover); animation:fadeInRow 0.25s ease; }
+    .rg-name { color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rg-guess { font-family:'Bebas Neue',cursive; font-size:0.85rem; color:var(--text-primary); }
+    .rg-pts { font-family:'Bebas Neue',cursive; font-size:0.85rem; color:var(--accent-light); }
+    .rg-pts.pending { color:var(--text-dim); }
+
+    /* RESULTS */
+    #screen-results { gap:22px; padding:8px 0 40px; }
+    .results-hdr { text-align:center; padding:28px 0 12px; }
+    .results-hdr h2 { font-family:'Bebas Neue',cursive; font-size:clamp(2rem,8vw,3.2rem); letter-spacing:0.06em; line-height:1; margin-bottom:8px; }
+    .big-score-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; margin:8px 0; }
+    .big-score-wrap .lbl { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-dim); }
+    .big-score { font-family:'Bebas Neue',cursive; font-size:clamp(2.8rem,10vw,4.5rem); color:var(--accent-light); line-height:1; text-shadow:0 0 40px var(--accent-glow); }
+    .rank-txt { font-size:0.82rem; color:var(--text-muted); margin-top:4px; }
+    .results-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .tbl { border-radius:var(--radius); overflow:hidden; }
+    .tbl-title { font-family:'Bebas Neue',cursive; font-size:1rem; letter-spacing:0.06em; padding:12px 18px; border-bottom:1px solid var(--border); color:var(--text-muted); }
+    .tbl-hdr { display:grid; padding:8px 18px; border-bottom:1px solid var(--border); font-size:0.6rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-dim); }
+    .tbl-hdr.sh { grid-template-columns:44px 1fr 100px 100px 80px; }
+    .tbl-hdr.lh { grid-template-columns:36px 1fr 80px; }
+    .tbl-rs { display:grid; grid-template-columns:44px 1fr 100px 100px 80px; padding:12px 18px; border-bottom:1px solid var(--border); align-items:center; transition:background 0.15s; font-size:0.78rem; }
+    .tbl-rl { display:grid; grid-template-columns:36px 1fr 80px; padding:12px 18px; border-bottom:1px solid var(--border); align-items:center; transition:background 0.15s; }
+    .tbl-rs:last-child,.tbl-rl:last-child { border-bottom:none; }
+    .tbl-rs:hover,.tbl-rl:hover { background:var(--bg-hover); }
+    .rn { font-family:'Bebas Neue',cursive; font-size:1.1rem; color:var(--text-dim); }
+    .sc { font-size:0.76rem; color:var(--text-primary); }
+    .nc { font-family:'Bebas Neue',cursive; font-size:0.95rem; color:var(--text-muted); }
+    .ac { font-family:'Bebas Neue',cursive; font-size:0.95rem; color:var(--green); }
+    .pc { font-family:'Bebas Neue',cursive; font-size:1rem; color:var(--accent-light); }
+    .results-acts { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+    /* MODAL */
+    .modal-backdrop { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+    .modal-backdrop.visible { display:flex; }
+    .modal { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:36px 40px; max-width:380px; width:90%; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.8); animation:modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+    .modal-icon { font-size:2.2rem; margin-bottom:12px; }
+    .modal h3 { font-family:'Bebas Neue',cursive; font-size:1.5rem; letter-spacing:0.05em; margin-bottom:10px; }
+    .modal p { font-size:0.78rem; color:var(--text-muted); line-height:1.6; margin-bottom:28px; }
+    .modal-actions { display:flex; gap:12px; justify-content:center; }
+
+    footer { position:fixed; bottom:14px; right:18px; font-size:0.62rem; color:var(--text-dim); z-index:10; }
+    #toast { position:fixed; bottom:36px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:11px 22px; font-size:0.8rem; color:var(--text-primary); opacity:0; transition:opacity 0.3s,transform 0.3s; pointer-events:none; z-index:100; white-space:nowrap; }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @media (max-width:800px) { .game-layout { grid-template-columns:1fr; } .leaderboard { position:static; } .results-grid { grid-template-columns:1fr; } }
+    @media (max-width:580px) { .guess-panel,.login-card,.menu-card { padding:20px 16px; } }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg></div>
+    <h1>Viewcount <span>Guessr</span></h1>
+  </header>
+
+  <!-- LOGIN -->
+  <div id="screen-login" class="screen active">
+    <div class="card login-card">
+      <h2>Willkommen!</h2>
+      <p>Melde dich mit deinem Twitch-Account an und schätze die Zuschauerzahlen live streamender deutscher Kanäle.</p>
+      <button class="btn-twitch-login" id="btn-twitch-login">
+        <svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+        Mit Twitch anmelden
+      </button>
+      <div class="login-divider"><span>oder</span></div>
+      <div style="text-align:center;"><button class="btn-ghost" id="btn-demo">Demo spielen (ohne Anmeldung)</button></div>
+      <div class="login-info">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        Das Spiel fragt nur nach deiner Identität. Es werden keinerlei Aktionen in deinem Namen durchgeführt.
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div id="screen-menu" class="screen">
+    <div class="card menu-card">
+      <h2>Wie viele Runden?</h2>
+      <p>Zuschauer können mitspielen indem sie ihre Schätzung in deinen Chat schreiben!</p>
+      <div class="user-badge" id="user-badge" style="display:none;">
+        <img id="user-avatar" src="" alt="Avatar" />
+        <div>
+          <div class="user-badge-name" id="user-disp">—</div>
+          <div class="user-badge-sub">Mit Twitch angemeldet ✓</div>
+        </div>
+      </div>
+      <div class="round-label">Runden auswählen</div>
+      <div class="round-options">
+        <button class="round-btn" data-r="5">5</button>
+        <button class="round-btn active" data-r="10">10</button>
+        <button class="round-btn" data-r="15">15</button>
+      </div>
+      <button class="btn-primary" id="btn-start">▶ &nbsp;Spiel starten</button>
+      <div style="margin-top:14px;"><button class="btn-ghost" id="btn-logout">Abmelden</button></div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="screen-game" class="screen">
+    <div class="top-bar">
+      <div class="round-indicator">Runde <strong id="rc">1</strong> / <span id="rt">10</span></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn-menu" id="btn-to-menu">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Hauptmenü
+        </button>
+        <div class="card score-box"><span class="lbl">Punkte</span><span class="score-val" id="sv">0</span></div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="modal-menu">
+      <div class="modal">
+        <div class="modal-icon">🏠</div>
+        <h3>Zum Hauptmenü?</h3>
+        <p>Dein aktueller Spielfortschritt geht verloren.</p>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="modal-cancel">Weiterspielen</button>
+          <button class="btn-primary" id="modal-confirm">Ja, Hauptmenü</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-box" id="err-box">
+      <div class="err-icon">😵</div>
+      <div class="err-title">Fehler</div>
+      <div class="err-msg" id="err-msg">Konnte keine deutschen Livestreams laden.</div>
+      <button class="btn-secondary" id="btn-retry">Erneut versuchen</button>
+    </div>
+
+    <div class="game-layout">
+      <!-- LINKS: Stream + Schätz-Panel -->
+      <div class="game-left">
+        <div class="stream-wrap">
+          <!-- Thumbnail: sofort sichtbar -->
+          <img id="stream-thumb" src="" alt="Stream Vorschau" />
+          <!-- Player: lädt im Hintergrund, blendet sich ein wenn bereit -->
+          <iframe id="twitch-iframe" allow="autoplay" src="about:blank"></iframe>
+          <!-- Blur über Zuschauerzahl -->
+          <div class="viewer-blur-bar" id="viewer-blur-bar"></div>
+          <!-- Ergebnis-Overlay -->
+          <div class="result-overlay" id="result-overlay">
+            <span class="overlay-label">Echte Zuschauer</span>
+            <span class="overlay-viewers" id="overlay-viewers">—</span>
+            <span class="overlay-sub">Stream läuft weiter im Hintergrund</span>
+          </div>
+        </div>
+
+        <div class="card guess-panel">
+          <div class="guess-title">Wie viele Zuschauer hat dieser Stream?</div>
+          <div class="input-row">
+            <input type="number" id="g-inp" class="guess-input" placeholder="z.B. 1500" min="0" />
+            <button class="btn-primary" id="btn-sub">Schätzen</button>
+          </div>
+          <div class="result-area" id="res-area">
+            <div class="acc-bar-wrap"><div class="acc-bar" id="acc-bar" style="width:0%;background:var(--green);"></div></div>
+            <div class="reveal-row">
+              <div style="display:flex;gap:28px;flex-wrap:wrap;">
+                <div class="reveal-block"><div class="reveal-label">Deine Schätzung</div><div class="reveal-val guess" id="rv-guess">—</div></div>
+                <div class="reveal-block"><div class="reveal-label">Echte Zuschauer</div><div class="reveal-val actual" id="rv-actual">—</div></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="feedback-badge" id="fb-badge">—</div>
+                <div class="pts-gained" id="pts-gained">+0 Punkte</div>
+              </div>
+            </div>
+            <div class="action-row"><button class="btn-secondary" id="btn-next">Nächster Stream →</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECHTS: Leaderboard -->
+      <div class="leaderboard">
+        <div class="card lb-card">
+          <div class="lb-title">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            Diese Runde
+          </div>
+          <div class="chat-status">
+            <div class="chat-dot" id="chat-dot"></div>
+            <span id="chat-status-txt">Nicht verbunden</span>
+          </div>
+          <div class="round-guesses" id="round-guesses">
+            <div class="lb-empty">Warte auf Schätzungen…<br><span style="font-size:0.65rem;">Zuschauer tippen ihre Zahl in den Chat</span></div>
+          </div>
+        </div>
+        <div class="card lb-card">
+          <div class="lb-title">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+            Gesamtpunkte
+          </div>
+          <div id="leaderboard-total"><div class="lb-empty">Noch keine Punkte</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="screen-results" class="screen">
+    <div class="results-hdr">
+      <h2>Spielende!</h2>
+      <div class="big-score-wrap"><span class="lbl">Deine Gesamtpunkte</span><span class="big-score" id="final-sc">0</span></div>
+      <div class="rank-txt" id="rank-txt">—</div>
+    </div>
+    <div class="results-grid">
+      <div class="card tbl">
+        <div class="tbl-title">📺 Deine Runden</div>
+        <div class="tbl-hdr sh"><span>#</span><span>Stream</span><span>Schätzung</span><span>Wirklich</span><span>Punkte</span></div>
+        <div id="tbl-rows"></div>
+      </div>
+      <div class="card tbl">
+        <div class="tbl-title">🏆 Chat-Highscores</div>
+        <div class="tbl-hdr lh"><span>#</span><span>Zuschauer</span><span>Punkte</span></div>
+        <div id="tbl-chat-rows"></div>
+      </div>
+    </div>
+    <div class="results-acts"><button class="btn-primary" id="btn-again">↩ Nochmal spielen</button></div>
+  </div>
+
+</div>
+<footer>made by kieskauer</footer>
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   CONFIG – nur Client-ID, kein Secret!
+   Das Secret gehört NICHT in den Frontend-Code.
+══════════════════════════════════════════════ */
+const CLIENT_ID = 'v3hih0hj6dlk4nvq2h6c1a3k61ibro';
+
+/* ══════════════════════════════════════════════
+   DEMO-DATEN
+══════════════════════════════════════════════ */
+const DEMO = [
+  {channel:'Montana_Black',login:'montana_black',game:'Just Chatting',viewers:18400},
+  {channel:'Trymacs',login:'trymacs',game:'Fortnite',viewers:9700},
+  {channel:'HandOfBlood',login:'handofblood',game:'Minecraft',viewers:7200},
+  {channel:'Papaplatte',login:'papaplatte',game:'GTA V',viewers:5100},
+  {channel:'Knossi',login:'knossi',game:'Just Chatting',viewers:3900},
+  {channel:'Eligella',login:'eligella',game:'Valorant',viewers:3200},
+  {channel:'Tanzverbot',login:'tanzverbot',game:'World of Warcraft',viewers:2100},
+  {channel:'Bonjwa',login:'bonjwa',game:'StarCraft II',viewers:1800},
+  {channel:'Sturmwaffel',login:'sturmwaffel',game:'Rocket League',viewers:1550},
+  {channel:'Shurjoka',login:'shurjoka',game:'League of Legends',viewers:870},
+  {channel:'Gnu',login:'gnu_de',game:'Chess',viewers:540},
+  {channel:'ELoTRiX',login:'elotr1x',game:'Just Chatting',viewers:720},
+  {channel:'Fireshock',login:'fireshock',game:'EA FC 25',viewers:310},
+  {channel:'DerKleineMuk',login:'derkleinemuktv',game:'Counter-Strike 2',viewers:95},
+  {channel:'Noway4u',login:'noway4u_straya',game:'League of Legends',viewers:190},
+];
+
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+const G = {demo:false,token:'',userName:'',pool:[],used:[],rounds:10,round:0,score:0,history:[],current:null,submitted:false,lang:'de,en',cat:''};
+const MP = {totals:{},roundGuesses:{},revealed:false};
+
+const $  = id => document.getElementById(id);
+const fN = n  => n.toLocaleString('de-DE');
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function calcPts(g,a){if(!a)return 0;return Math.max(0,Math.round(1000*Math.exp(-3.5*Math.abs(g-a)/a)));}
+function getFb(p){if(p>=900)return{txt:'🔥 Perfekt!',cls:'perfect'};if(p>=600)return{txt:'⚡ Sehr nah!',cls:'great'};if(p>=250)return{txt:'👍 Ganz gut!',cls:'good'};return{txt:'💀 Weit daneben!',cls:'miss'};}
+function toast(msg,ms=2800){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),ms);}
+
+/* ══════════════════════════════════════════════
+   TWITCH IRC CHAT (anonym, read-only)
+   Verbindet sich mit dem Chat des HOST-Kanals.
+   Zuschauer tippen ihre Zahl → wird als Guess gewertet.
+══════════════════════════════════════════════ */
+let chatWs = null;
+let chatChannel = '';
+
+function connectChat(channel) {
+  disconnectChat();
+  chatChannel = channel.toLowerCase();
+  setChatStatus('connecting');
+
+  chatWs = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+  chatWs.onopen = () => {
+    chatWs.send('CAP REQ :twitch.tv/tags');
+    chatWs.send('NICK justinfan' + Math.floor(Math.random()*999999));
+    chatWs.send(`JOIN #${chatChannel}`);
+  };
+
+  chatWs.onmessage = (e) => {
+    e.data.split('\r\n').forEach(line => {
+      if (!line) return;
+      if (line.startsWith('PING')) { chatWs.send('PONG :tmi.twitch.tv'); return; }
+      if (line.includes(`JOIN #${chatChannel}`)) { setChatStatus('connected'); return; }
+      if (line.includes('PRIVMSG')) parseChatMsg(line);
+    });
+  };
+
+  chatWs.onerror = () => setChatStatus('error');
+  chatWs.onclose = () => { if(chatChannel) setChatStatus('disconnected'); };
+}
+
+function disconnectChat() {
+  if (chatWs) { chatChannel=''; chatWs.close(); chatWs=null; }
+  setChatStatus('disconnected');
+}
+
+function setChatStatus(s) {
+  const dot=$('chat-dot'), txt=$('chat-status-txt');
+  dot.className='chat-dot';
+  if(s==='connected'){dot.classList.add('connected');txt.textContent=`#${chatChannel} verbunden`;}
+  else if(s==='connecting'){txt.textContent='Verbinde mit Chat…';}
+  else if(s==='error'){dot.classList.add('error');txt.textContent='Chat-Fehler';}
+  else{txt.textContent='Nicht verbunden';}
+}
+
+function parseChatMsg(line) {
+  // Tags parsen (display-name)
+  let displayName='', userLogin='';
+  const tagM = line.match(/^@([^ ]+)/);
+  if (tagM) {
+    const tags={};
+    tagM[1].split(';').forEach(t=>{const[k,v]=t.split('=');tags[k]=v;});
+    displayName = tags['display-name']||'';
+    userLogin   = (tags['display-name']||'').toLowerCase();
+  }
+  if (!userLogin) { const m=line.match(/:([^!]+)!/); if(m)userLogin=m[1].toLowerCase(); }
+  if (!displayName) displayName=userLogin;
+
+  // Nachricht extrahieren
+  const msgM = line.match(/PRIVMSG #\S+ :(.+)$/);
+  if (!msgM) return;
+  const text = msgM[1].trim();
+
+  // Nur reine Zahlen akzeptieren
+  if (!/^\d{1,7}$/.test(text)) return;
+  const guess = parseInt(text);
+  if (isNaN(guess) || guess < 0) return;
+
+  // Kein Guess mehr nach Streamer-Submit
+  if (G.submitted) return;
+  // Jeder User nur einmal pro Runde
+  if (MP.roundGuesses[userLogin]) return;
+  // Streamer selbst nicht als Zuschauer
+  if (G.current && userLogin === G.current.login.toLowerCase()) return;
+
+  MP.roundGuesses[userLogin] = {display:displayName, guess, pts:null};
+
+  if (MP.revealed && G.current) {
+    const pts=calcPts(guess,G.current.viewers);
+    MP.roundGuesses[userLogin].pts=pts;
+    addToTotals(userLogin,displayName,pts);
+  }
+  renderRoundGuesses();
+}
+
+/* ══════════════════════════════════════════════
+   LEADERBOARD
+══════════════════════════════════════════════ */
+function renderRoundGuesses() {
+  const c=$('round-guesses');
+  const entries=Object.values(MP.roundGuesses);
+  if (!entries.length){c.innerHTML='<div class="lb-empty">Warte auf Schätzungen…<br><span style="font-size:0.65rem;">Zuschauer tippen ihre Zahl in den Chat</span></div>';return;}
+  const sorted=[...entries].sort((a,b)=>MP.revealed?(b.pts||0)-(a.pts||0):0);
+  c.innerHTML=sorted.map(e=>`
+    <div class="rg-row">
+      <span class="rg-name">${esc(e.display)}</span>
+      <span class="rg-guess">${fN(e.guess)}</span>
+      <span class="rg-pts ${e.pts===null?'pending':''}">${e.pts===null?'?':'+'+fN(e.pts)}</span>
+    </div>`).join('');
+}
+
+function renderTotalLB() {
+  const c=$('leaderboard-total');
+  const entries=Object.values(MP.totals).sort((a,b)=>b.total-a.total).slice(0,15);
+  if (!entries.length){c.innerHTML='<div class="lb-empty">Noch keine Punkte</div>';return;}
+  c.innerHTML=entries.map((e,i)=>{
+    const rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    const rt=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    const isSelf=e.login===G.userName?.toLowerCase();
+    return `<div class="lb-row ${isSelf?'streamer':''}">
+      <span class="lb-rank ${rc}">${rt}</span>
+      <span class="lb-name">${esc(e.display)}${isSelf?'<span class="you">Du</span>':''}</span>
+      <span class="lb-pts">${fN(e.total)}</span>
+    </div>`;
+  }).join('');
+}
+
+function addToTotals(login,display,pts) {
+  if(!MP.totals[login])MP.totals[login]={login,display,total:0};
+  MP.totals[login].total+=pts;
+  MP.totals[login].display=display;
+  renderTotalLB();
+}
+
+function revealChatGuesses() {
+  MP.revealed=true;
+  const actual=G.current.viewers;
+  Object.keys(MP.roundGuesses).forEach(login=>{
+    const e=MP.roundGuesses[login];
+    if(e.pts===null){e.pts=calcPts(e.guess,actual);addToTotals(login,e.display,e.pts);}
+  });
+  renderRoundGuesses();
+}
+
+/* ══════════════════════════════════════════════
+   AUTH – OAuth Implicit Flow
+══════════════════════════════════════════════ */
+const REDIRECT_URI='https://kieskauer.github.io/viewcount-guessr/';
+
+function startLogin(){
+  const p=new URLSearchParams({client_id:CLIENT_ID,redirect_uri:REDIRECT_URI,response_type:'token',scope:'user:read:email'});
+  window.location.href=`https://id.twitch.tv/oauth2/authorize?${p}`;
+}
+function extractToken(){
+  const p=new URLSearchParams(window.location.hash.substring(1));
+  const t=p.get('access_token');
+  if(t)history.replaceState(null,'',window.location.pathname);
+  return t||null;
+}
+function saveToken(t){try{localStorage.setItem('vg_t',t);}catch(e){}}
+function loadToken(){try{return localStorage.getItem('vg_t');}catch(e){return null;}}
+function clearToken(){try{localStorage.removeItem('vg_t');}catch(e){}}
+async function validateToken(t){try{const r=await fetch('https://id.twitch.tv/oauth2/validate',{headers:{'Authorization':`OAuth ${t}`}});return r.ok;}catch(e){return false;}}
+async function fetchUser(t){try{const r=await fetch('https://api.twitch.tv/helix/users',{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${t}`}});if(!r.ok)return null;const d=await r.json();return d.data?.[0]||null;}catch(e){return null;}}
+
+(async()=>{
+  let token=extractToken();
+  if(token){saveToken(token);}
+  else{token=loadToken();if(token&&!await validateToken(token)){clearToken();token=null;}}
+  if(token){
+    G.token=token;G.demo=false;
+    const user=await fetchUser(token);
+    if(user){
+      G.userName=user.display_name||user.login;
+      $('user-avatar').src=user.profile_image_url||'';
+      $('user-disp').textContent=G.userName;
+      $('user-badge').style.display='flex';
+    }
+    G.pool=await loadStreams().catch(()=>[]);
+    show('screen-menu');
+  }
+})();
+
+$('btn-twitch-login').addEventListener('click',()=>{
+  const b=$('btn-twitch-login');b.disabled=true;
+  b.innerHTML='<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>&nbsp;Weiterleitung…';
+  startLogin();
+});
+$('btn-demo').addEventListener('click',()=>{G.demo=true;G.pool=shuffle([...DEMO]);$('user-badge').style.display='none';show('screen-menu');});
+$('btn-logout').addEventListener('click',()=>{clearToken();G.token='';G.userName='';G.demo=false;$('user-badge').style.display='none';show('screen-login');});
+
+/* ══════════════════════════════════════════════
+   API – Streams laden (erste Seite sofort, rest im Hintergrund)
+══════════════════════════════════════════════ */
+async function loadStreams(){
+  const langs = G.lang.split(',');
+  const catParam = G.cat ? `&game_id=${G.cat}` : '';
+  const fetches = langs.map(lang =>
+    fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}})
+      .then(r=>r.json()).then(d=>(d.data||[]).filter(s=>s.viewer_count>0))
+      .catch(()=>[])
+  );
+  const results = await Promise.all(fetches);
+  const all = results.flat();
+  if(!all.length) throw new Error('Keine Streams für diese Auswahl gefunden.');
+  const streams = shuffle(all.map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count})));
+  langs.forEach(lang => loadMoreStreams(lang, catParam));
+  return streams;
+}
+
+async function loadMoreStreams(lang, catParam=''){
+  try{
+    const r=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+    if(!r.ok)return;
+    const d=await r.json();
+    let cursor=d.pagination?.cursor;
+    for(let p=0;p<3&&cursor;p++){
+      const r2=await fetch(`https://api.twitch.tv/helix/streams?language=${lang}&first=100${catParam}&after=${cursor}`,{headers:{'Client-Id':CLIENT_ID,'Authorization':`Bearer ${G.token}`}});
+      if(!r2.ok)break;
+      const d2=await r2.json();
+      const more=(d2.data||[]).filter(s=>s.viewer_count>0).map(s=>({channel:s.user_name,login:s.user_login,game:s.game_name||'Unbekannt',viewers:s.viewer_count}));
+      G.pool.push(...more);
+      cursor=d2.pagination?.cursor;
+    }
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════════
+   MENU
+══════════════════════════════════════════════ */
+document.querySelectorAll('.lang-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.lang=b.dataset.lang;});
+});
+
+document.querySelectorAll('.cat-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.cat=b.dataset.cat;});
+});
+
+document.querySelectorAll('.round-btn').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.round-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.rounds=parseInt(b.dataset.r);});
+});
+$('btn-start').addEventListener('click',()=>{
+  G.round=0;G.score=0;G.used=[];G.history=[];
+  MP.totals={};MP.roundGuesses={};MP.revealed=false;
+  if(G.demo)G.pool=shuffle([...DEMO]);
+  $('rt').textContent=G.rounds;$('sv').textContent='0';
+  renderTotalLB();show('screen-game');nextRound();
+});
+
+/* Modal */
+$('btn-to-menu').addEventListener('click',()=>$('modal-menu').classList.add('visible'));
+$('modal-cancel').addEventListener('click',()=>$('modal-menu').classList.remove('visible'));
+$('modal-confirm').addEventListener('click',()=>{
+  $('modal-menu').classList.remove('visible');
+  disconnectChat();
+  $('twitch-iframe').src='about:blank';
+  show('screen-menu');
+});
+$('modal-menu').addEventListener('click',e=>{if(e.target===$('modal-menu'))$('modal-menu').classList.remove('visible');});
+
+/* ══════════════════════════════════════════════
+   STREAM LADEN
+   1. Thumbnail sofort → User sieht direkt etwas
+   2. Twitch-Player lädt im Hintergrund
+   3. Wenn Player bereit → einblenden, Thumbnail ausblenden
+══════════════════════════════════════════════ */
+let iframeTimer = null;
+
+function loadStream(login) {
+  $('result-overlay').classList.remove('visible');
+  $('viewer-blur-bar').classList.remove('hidden');
+
+  const iframe = $('twitch-iframe');
+  const thumb  = $('stream-thumb');
+
+  // Alten Timer aufräumen
+  if (iframeTimer) { clearTimeout(iframeTimer); iframeTimer=null; }
+
+  // 1. Thumbnail sofort laden
+  thumb.style.opacity = '1';
+  thumb.src = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${login.toLowerCase()}-1280x720.jpg?t=${Date.now()}`;
+
+  // 2. iframe zurücksetzen
+  iframe.classList.remove('visible');
+  iframe.src = 'about:blank';
+
+  // 3. Twitch-Player im Hintergrund laden
+  const parent = window.location.hostname || 'localhost';
+  iframeTimer = setTimeout(() => {
+    iframe.onload = () => {
+      // Warte bis der Twitch-Player wirklich spielt (~3 Sek)
+      iframeTimer = setTimeout(() => {
+        iframe.classList.add('visible');
+        thumb.style.opacity = '0';
+      }, 3000);
+    };
+    iframe.src = `https://player.twitch.tv/?channel=${login}&parent=${parent}&autoplay=true&muted=false`;
+  }, 200);
+}
+
+/* ══════════════════════════════════════════════
+   RUNDEN
+══════════════════════════════════════════════ */
+async function nextRound() {
+  G.submitted=false;
+  MP.roundGuesses={};MP.revealed=false;
+  $('g-inp').value='';$('g-inp').disabled=false;$('btn-sub').disabled=false;
+  $('res-area').classList.remove('visible');$('btn-next').style.display='none';
+  $('err-box').classList.remove('visible');$('result-overlay').classList.remove('visible');
+  $('viewer-blur-bar').classList.remove('hidden');
+  $('rc').textContent=G.round+1;
+  renderRoundGuesses();
+
+  let stream;
+  try{stream=await pickStream();}catch(e){showErr(e.message);return;}
+  if(!stream){showErr('Keine weiteren deutschen Livestreams verfügbar.');return;}
+
+  G.current=stream;G.round++;
+  $('rc').textContent=G.round;
+
+  loadStream(stream.login);
+
+  // Chat des HOSTS verbinden (nicht des angezeigten Streamers)
+  if(!G.demo&&G.userName){connectChat(G.userName.toLowerCase());}
+
+  $('g-inp').focus();
+}
+
+async function pickStream(){
+  if(G.used.length>=G.pool.length){
+    if(!G.demo){G.pool=await loadStreams().catch(()=>G.pool);}
+    else{G.pool=shuffle([...DEMO]);}
+    G.used=[];
+  }
+  const avail=G.pool.map((_,i)=>i).filter(i=>!G.used.includes(i));
+  if(!avail.length)return null;
+  const idx=avail[Math.floor(Math.random()*avail.length)];
+  G.used.push(idx);return G.pool[idx];
+}
+
+function showErr(msg){$('err-msg').textContent=msg;$('err-box').classList.add('visible');}
+$('btn-retry').addEventListener('click',nextRound);
+
+/* ══════════════════════════════════════════════
+   SCHÄTZUNG
+══════════════════════════════════════════════ */
+$('btn-sub').addEventListener('click',submitGuess);
+$('g-inp').addEventListener('keydown',e=>{if(e.key==='Enter')submitGuess();});
+
+function submitGuess(){
+  if(G.submitted)return;
+  const guess=parseInt($('g-inp').value.trim());
+  if(isNaN(guess)||guess<0){toast('Bitte eine gültige Zahl eingeben!');return;}
+  G.submitted=true;$('g-inp').disabled=true;$('btn-sub').disabled=true;
+
+  const actual=G.current.viewers,pts=calcPts(guess,actual),fb=getFb(pts);
+  G.score+=pts;G.history.push({channel:G.current.channel,game:G.current.game,guess,actual,pts});
+
+  // Streamer ins Leaderboard
+  const sLogin=G.userName?.toLowerCase()||'streamer';
+  addToTotals(sLogin,G.userName||'Streamer',pts);
+
+  // Chat-Guesses auflösen
+  revealChatGuesses();
+
+  $('overlay-viewers').textContent=fN(actual);
+  $('result-overlay').classList.add('visible');
+  $('viewer-blur-bar').classList.add('hidden');
+
+  $('rv-guess').textContent=fN(guess);$('rv-actual').textContent=fN(actual);
+  $('fb-badge').textContent=fb.txt;$('fb-badge').className=`feedback-badge ${fb.cls}`;
+  $('pts-gained').textContent=`+${fN(pts)} Punkte`;
+
+  const pct=Math.min(100,(pts/1000)*100);
+  $('acc-bar').style.width=pct+'%';
+  $('acc-bar').style.background=pct>=90?'var(--green)':pct>=60?'var(--accent-light)':pct>=25?'var(--yellow)':'var(--red)';
+
+  $('sv').textContent=fN(G.score);$('sv').classList.add('bump');
+  setTimeout(()=>$('sv').classList.remove('bump'),380);
+
+  $('res-area').classList.add('visible');
+  const isLast=G.round>=G.rounds;
+  $('btn-next').textContent=isLast?'Ergebnis ansehen →':'Nächster Stream →';
+  $('btn-next').style.display='inline-flex';
+  playSound(pts);
+}
+
+$('btn-next').addEventListener('click',()=>{if(G.round>=G.rounds)showResults();else nextRound();});
+
+/* ══════════════════════════════════════════════
+   ERGEBNISSE
+══════════════════════════════════════════════ */
+function showResults(){
+  disconnectChat();show('screen-results');
+  $('final-sc').textContent=fN(G.score);
+  const avg=G.score/G.rounds;
+  $('rank-txt').textContent=avg>=800?'🏆 Absoluter Profi!':avg>=600?'🎯 Sehr gut!':avg>=350?'👍 Solide Leistung!':'📺 Weiter üben!';
+  $('tbl-rows').innerHTML='';
+  G.history.forEach((r,i)=>{
+    const row=document.createElement('div');row.className='tbl-rs';
+    row.innerHTML=`<span class="rn">${i+1}</span><span class="sc">${r.channel}<br><span style="color:var(--text-dim);font-size:0.65rem;">${r.game}</span></span><span class="nc">${fN(r.guess)}</span><span class="ac">${fN(r.actual)}</span><span class="pc">${fN(r.pts)}</span>`;
+    $('tbl-rows').appendChild(row);
+  });
+  $('tbl-chat-rows').innerHTML='';
+  const chatE=Object.values(MP.totals).filter(e=>e.login!==G.userName?.toLowerCase()).sort((a,b)=>b.total-a.total).slice(0,20);
+  if(!chatE.length){$('tbl-chat-rows').innerHTML='<div style="padding:20px;text-align:center;font-size:0.75rem;color:var(--text-dim);">Keine Zuschauer haben mitgespielt</div>';}
+  else chatE.forEach((e,i)=>{
+    const row=document.createElement('div');row.className='tbl-rl';
+    const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    row.innerHTML=`<span class="rn">${m}</span><span class="sc">${esc(e.display)}</span><span class="pc">${fN(e.total)}</span>`;
+    $('tbl-chat-rows').appendChild(row);
+  });
+}
+$('btn-again').addEventListener('click',()=>show('screen-menu'));
+
+/* ══════════════════════════════════════════════
+   MENÜ-MUSIK
+   Entspannter Lo-Fi Ambient-Sound generiert mit
+   der Web Audio API – kein externes File nötig.
+   Aufbau: sanfte Akkord-Pads + leise Bass-Noten
+   die sich langsam abwechseln.
+══════════════════════════════════════════════ */
+let musicCtx   = null;
+let musicNodes = [];   // alle aktiven Nodes zum Stoppen
+let musicTimer = null; // Interval-ID
+
+// Lo-Fi Akkord-Progression (Cmaj7 → Am7 → Fmaj7 → G7)
+const CHORDS = [
+  [261.63, 329.63, 392.00, 493.88],  // Cmaj7
+  [220.00, 261.63, 329.63, 415.30],  // Am7
+  [174.61, 220.00, 261.63, 329.63],  // Fmaj7
+  [196.00, 246.94, 293.66, 349.23],  // G7
+];
+const BASS = [130.81, 110.00, 87.31, 98.00]; // Bass-Noten dazu
+
+let chordIdx = 0;
+
+function startMenuMusic() {
+  stopMenuMusic();
+  try {
+    if (!musicCtx) musicCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (musicCtx.state === 'suspended') musicCtx.resume();
+    playChord();
+    musicTimer = setInterval(playChord, 3200); // alle 3,2 Sek neuer Akkord
+  } catch(e) {}
+}
+
+function stopMenuMusic() {
+  if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+  musicNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  musicNodes = [];
+}
+
+function playChord() {
+  if (!musicCtx) return;
+  const t = musicCtx.currentTime;
+  const chord = CHORDS[chordIdx % CHORDS.length];
+  const bass  = BASS[chordIdx % BASS.length];
+  chordIdx++;
+
+  // Master-Gain für diesen Akkord
+  const master = musicCtx.createGain();
+  master.connect(musicCtx.destination);
+  master.gain.setValueAtTime(0, t);
+  master.gain.linearRampToValueAtTime(0.07, t + 0.8);   // sanftes Einblenden
+  master.gain.setValueAtTime(0.07, t + 2.2);
+  master.gain.linearRampToValueAtTime(0, t + 3.2);       // sanftes Ausblenden
+
+  // Pad-Töne (mehrere Obertöne pro Note für wärmeren Sound)
+  chord.forEach(freq => {
+    [1, 2, 0.5].forEach((detune, i) => {
+      const osc = musicCtx.createOscillator();
+      const g   = musicCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * detune, t);
+      osc.frequency.setValueAtTime(freq * detune * (1 + (Math.random()-0.5)*0.002), t + 0.1); // leichtes Vibrato
+      g.gain.setValueAtTime(i === 0 ? 0.6 : 0.15, t);
+      osc.connect(g);
+      g.connect(master);
+      osc.start(t);
+      osc.stop(t + 3.3);
+      musicNodes.push(osc);
+    });
+  });
+
+  // Bass-Note (leiser, tiefer)
+  const bassOsc = musicCtx.createOscillator();
+  const bassG   = musicCtx.createGain();
+  bassOsc.type = 'triangle';
+  bassOsc.frequency.setValueAtTime(bass, t);
+  bassG.gain.setValueAtTime(0.5, t);
+  bassOsc.connect(bassG);
+  bassG.connect(master);
+  bassOsc.start(t);
+  bassOsc.stop(t + 3.3);
+  musicNodes.push(bassOsc);
+}
+
+/* Screen-Wechsel: Musik startet/stoppt je nach Screen */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  if(id==='screen-menu'||id==='screen-login'){startMenuMusic();}
+  else{stopMenuMusic();}
+}
+
+/* Musik beim ersten Klick starten (Browser-Autoplay-Policy) */
+document.addEventListener('click', () => {
+  const active = document.querySelector('.screen.active');
+  if (active && (active.id === 'screen-menu' || active.id === 'screen-login')) {
+    if (!musicTimer) startMenuMusic();
+  }
+}, { once: true });
+
+function playSound(pts){
+  try{
+    if(!musicCtx)musicCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=musicCtx.createOscillator(),g=musicCtx.createGain();o.connect(g);g.connect(musicCtx.destination);
+    const t=musicCtx.currentTime;
+    if(pts>=900){o.frequency.setValueAtTime(440,t);o.frequency.setValueAtTime(554,t+.1);o.frequency.setValueAtTime(660,t+.2);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.65);o.start(t);o.stop(t+.65);}
+    else if(pts>=500){o.frequency.setValueAtTime(392,t);o.frequency.setValueAtTime(523,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.start(t);o.stop(t+.4);}
+    else if(pts>=200){o.frequency.setValueAtTime(330,t);g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3);}
+    else{o.type='sawtooth';o.frequency.setValueAtTime(110,t);g.gain.setValueAtTime(.07,t);g.gain.exponentialRampToValueAtTime(.001,t+.45);o.start(t);o.stop(t+.45);}
+  }catch(e){}
+}
+</script>
+</body>
+</html>
